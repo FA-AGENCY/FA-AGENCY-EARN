@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="FA AGENCY™ EARN — টেলিগ্রাম মিনি অ্যাপের মাধ্যমে সহজ টাস্ক, বিজ্ঞাপন এবং রেফারেল সম্পন্ন করে উপার্জন করুন। bKash, Nagad ও Rocket-এ দ্রুত উত্তোলন করুন।" />
+  <meta name="keywords" content="FA AGENCY EARN, টেলিগ্রাম মিনি অ্যাপ, অনলাইন আয়, বাংলাদেশ, bKash, Nagad, রেফারেল" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="FA AGENCY™ EARN — সহজে আয় করুন" />
+  <meta property="og:description" content="টেলিগ্রাম মিনি অ্যাপের মাধ্যমে সহজ কাজ করে উপার্জন করুন।" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://fa-agency.online" />
+  <title>FA AGENCY™ EARN — Earn, Grow & Build Your Future</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Noto+Sans+Bengali:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ============================================================
+       NAVBAR
+  ============================================================ -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="#" class="nav-brand">
+        <span class="nav-logo-icon">👑</span>
+        <span class="nav-brand-text">FA AGENCY<sup>™</sup> <span class="earn-word">EARN</span></span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="#about">About</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#earning">Earning</a>
+        <a href="#security">Security</a>
+        <a href="#faq">FAQ</a>
+        <a href="#support">Support</a>
+      </div>
+      <a href="https://t.me/FAAgencyEarnBot" target="_blank" rel="noopener" class="btn btn-primary nav-cta">
+        ✈️ Launch App
+      </a>
+      <button class="nav-hamburger" id="navHamburger" aria-label="Menu">☰</button>
+    </div>
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <a href="#about" onclick="closeNav()">About</a>
+      <a href="#how-it-works" onclick="closeNav()">How It Works</a>
+      <a href="#earning" onclick="closeNav()">Earning Methods</a>
+      <a href="#security" onclick="closeNav()">Security</a>
+      <a href="#faq" onclick="closeNav()">FAQ</a>
+      <a href="#support" onclick="closeNav()">Support</a>
+      <a href="https://t.me/FAAgencyEarnBot" target="_blank" rel="noopener" class="btn btn-primary" style="text-align:center; margin-top:8px;">✈️ Launch Mini App</a>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section class="hero-section" id="hero">
+    <div class="hero-bg-glow"></div>
+    <div class="container">
+      <div class="hero-badge">🔐 Telegram Verified Mini App</div>
+      <h1 class="hero-title">
+        <span class="gradient-text">ঘরে বসে উপার্জন করুন</span><br />
+        FA AGENCY<sup>™</sup> EARN-এর সাথে
+      </h1>
+      <p class="hero-subtitle">
+        সহজ টাস্ক সম্পন্ন করুন, বিজ্ঞাপন দেখুন, প্রতিদিন বোনাস ক্লেইম করুন।<br />
+        সমস্ত পুরস্কার সার্ভার-যাচাইকৃত। কোনো guaranteed income দাবি নয়।
+      </p>
+      <div class="hero-cta-group">
+        <a href="https://t.me/FAAgencyEarnBot" target="_blank" rel="noopener" class="btn btn-hero-primary">
+          ✈️ Telegram-এ শুরু করুন
+        </a>
+        <a href="#how-it-works" class="btn btn-hero-outline">
+          কিভাবে কাজ করে? ↓
+        </a>
+      </div>
+      <div class="hero-stats-row">
+        <div class="hero-stat">
+          <span class="hero-stat-num">১০০%</span>
+          <span class="hero-stat-label">Telegram Verified</span>
+        </div>
+        <div class="hero-stat-div"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">HMAC</span>
+          <span class="hero-stat-label">Auth Security</span>
+        </div>
+        <div class="hero-stat-div"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">Immutable</span>
+          <span class="hero-stat-label">Ledger System</span>
+        </div>
+        <div class="hero-stat-div"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">bKash+</span>
+          <span class="hero-stat-label">Payment Methods</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ABOUT
+  ============================================================ -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="section-badge">আমাদের সম্পর্কে</div>
+      <h2 class="section-title">FA AGENCY™ EARN কী?</h2>
+      <p class="section-subtitle">
+        FA AGENCY™ EARN একটি Telegram-ভিত্তিক Mini App যা আপনাকে সহজ অনলাইন কাজের মাধ্যমে বাস্তব অর্থ উপার্জনের সুযোগ দেয়।
+      </p>
+      <div class="cards-grid-3">
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3>সুরক্ষিত প্ল্যাটফর্ম</h3>
+          <p>Telegram HMAC-SHA256 দ্বারা প্রমাণীকৃত। কোনো পাসওয়ার্ড সংরক্ষণ করা হয় না।</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>দ্রুত পেমেন্ট</h3>
+          <p>bKash, Nagad ও Rocket-এ ম্যানুয়াল ভেরিফিকেশন সাপেক্ষে দ্রুত উত্তোলন সুবিধা।</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>স্বচ্ছ লেজার</h3>
+          <p>ACID-compliant অপরিবর্তনীয় লেজার। আপনার প্রতিটি লেনদেন সুরক্ষিতভাবে রেকর্ড থাকে।</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       HOW IT WORKS
+  ============================================================ -->
+  <section class="section section-alt" id="how-it-works">
+    <div class="container">
+      <div class="section-badge">কিভাবে কাজ করে</div>
+      <h2 class="section-title">৪টি সহজ ধাপে শুরু করুন</h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">১</div>
+          <h3>Telegram Bot খুলুন</h3>
+          <p>@FAAgencyEarnBot-এ /start পাঠান। Telegram অ্যাকাউন্ট দিয়ে স্বয়ংক্রিয় লগইন হবে।</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-num">২</div>
+          <h3>কাজ সম্পন্ন করুন</h3>
+          <p>Daily Tasks, Watch Ads, Daily Bonus বা Referral Program-এ অংশ নিন।</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-num">৩</div>
+          <h3>সার্ভার যাচাই</h3>
+          <p>প্রতিটি পুরস্কার আমাদের সুরক্ষিত সার্ভার যাচাই করে আপনার ওয়ালেটে জমা করে।</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-num">৪</div>
+          <h3>উত্তোলন করুন</h3>
+          <p>ন্যূনতম ১০০ BDT হলে bKash, Nagad বা Rocket-এ উত্তোলনের অনুরোধ করুন।</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       EARNING METHODS
+  ============================================================ -->
+  <section class="section" id="earning">
+    <div class="container">
+      <div class="section-badge">আয়ের পদ্ধতি</div>
+      <h2 class="section-title">কিভাবে আয় করবেন?</h2>
+      <p class="section-subtitle">একাধিক পদ্ধতিতে আয়ের সুযোগ। সমস্ত পুরস্কার সার্ভার-নিয়ন্ত্রিত।</p>
+      <div class="earn-grid">
+        <div class="earn-card">
+          <div class="earn-icon">📋</div>
+          <div class="earn-content">
+            <h3>Daily Tasks</h3>
+            <p>Telegram চ্যানেল join, Facebook follow, YouTube subscribe, Survey সম্পন্ন করে পুরস্কার পান।</p>
+            <span class="earn-tag">Manual Verified</span>
+          </div>
+        </div>
+        <div class="earn-card">
+          <div class="earn-icon">🎬</div>
+          <div class="earn-content">
+            <h3>Watch Ads</h3>
+            <p>স্পন্সরড ভিডিও বিজ্ঞাপন দেখুন। সার্ভার session যাচাই করে পুরস্কার প্রদান করে।</p>
+            <span class="earn-tag">Server Verified</span>
+          </div>
+        </div>
+        <div class="earn-card">
+          <div class="earn-icon">🎁</div>
+          <div class="earn-content">
+            <h3>Daily Bonus</h3>
+            <p>প্রতিদিন একবার বোনাস ক্লেইম করুন। ৭ দিনের streak bonus সুবিধা পান।</p>
+            <span class="earn-tag">Daily Reward</span>
+          </div>
+        </div>
+        <div class="earn-card">
+          <div class="earn-icon">👥</div>
+          <div class="earn-content">
+            <h3>Referral Program</h3>
+            <p>বন্ধুদের আমন্ত্রণ জানান। সফল referral qualify হলে server যাচাই করে পুরস্কার দেয়।</p>
+            <span class="earn-tag">Qualified Only</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="disclaimer-box">
+        ⚠️ <strong>গুরুত্বপূর্ণ:</strong> FA AGENCY™ EARN কোনো guaranteed income বা fixed daily earning দাবি করে না। উপার্জনের পরিমাণ আপনার কাজ ও platform-এর শর্তাবলীর উপর নির্ভর করে।
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TASKS SECTION
+  ============================================================ -->
+  <section class="section section-alt" id="tasks">
+    <div class="container">
+      <div class="section-badge">Task সম্পর্কে</div>
+      <h2 class="section-title">Task System কিভাবে কাজ করে?</h2>
+      <div class="cards-grid-2">
+        <div class="info-card">
+          <h3>✅ Task শুরু করুন</h3>
+          <p>Mini App-এ Daily Tasks সেকশনে যান, পছন্দের task-এ ক্লিক করুন এবং নির্দেশনা অনুসরণ করুন।</p>
+        </div>
+        <div class="info-card">
+          <h3>📸 প্রমাণ জমা দিন</h3>
+          <p>Task সম্পন্ন করার স্ক্রিনশট বা proof Admin-এর review-এর জন্য submit করুন।</p>
+        </div>
+        <div class="info-card">
+          <h3>🔍 Admin Verification</h3>
+          <p>Admin team প্রতিটি submission যাচাই করে। Valid submission-এ পুরস্কার ওয়ালেটে জমা হয়।</p>
+        </div>
+        <div class="info-card">
+          <h3>🚫 Abuse Prevention</h3>
+          <p>Duplicate submission, fake proof এবং automation script fraud detection system দ্বারা block হবে।</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       REFERRAL SECTION
+  ============================================================ -->
+  <section class="section" id="referral">
+    <div class="container">
+      <div class="section-badge">Referral Program</div>
+      <h2 class="section-title">বন্ধুদের আমন্ত্রণ জানান</h2>
+      <p class="section-subtitle">আপনার রেফারেল লিংকে বন্ধু যোগ দিলে তাদের সফল কার্যক্রম সাপেক্ষে পুরস্কার পাবেন।</p>
+      <div class="referral-flow">
+        <div class="ref-step">
+          <span class="ref-step-icon">🔗</span>
+          <h4>Referral Link Share করুন</h4>
+          <p>Mini App থেকে আপনার unique referral লিংক copy করুন।</p>
+        </div>
+        <div class="ref-arrow">→</div>
+        <div class="ref-step">
+          <span class="ref-step-icon">👤</span>
+          <h4>বন্ধু Register করুন</h4>
+          <p>বন্ধু আপনার লিংকে ক্লিক করে Telegram দিয়ে যোগ দেন।</p>
+        </div>
+        <div class="ref-arrow">→</div>
+        <div class="ref-step">
+          <span class="ref-step-icon">✅</span>
+          <h4>Qualification যাচাই</h4>
+          <p>Server qualification criteria যাচাই করে (active account, no fraud)।</p>
+        </div>
+        <div class="ref-arrow">→</div>
+        <div class="ref-step">
+          <span class="ref-step-icon">💰</span>
+          <h4>পুরস্কার পান</h4>
+          <p>Server configurable পুরস্কার আপনার ওয়ালেটে immutable ledger-এ জমা হয়।</p>
+        </div>
+      </div>
+      <div class="disclaimer-box">
+        ⚠️ Self-referral, duplicate account এবং fake account দিয়ে referral সম্পূর্ণ নিষিদ্ধ ও fraud system দ্বারা শনাক্ত হবে।
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       WALLET & WITHDRAWAL
+  ============================================================ -->
+  <section class="section section-alt" id="wallet">
+    <div class="container">
+      <div class="section-badge">Wallet ও Withdrawal</div>
+      <h2 class="section-title">নিরাপদ ও দ্রুত উত্তোলন</h2>
+      <div class="cards-grid-3">
+        <div class="payment-card">
+          <div class="payment-logo bkash-color">bK</div>
+          <h4>bKash</h4>
+          <p>সরাসরি bKash নম্বরে উত্তোলন</p>
+        </div>
+        <div class="payment-card">
+          <div class="payment-logo nagad-color">না</div>
+          <h4>Nagad</h4>
+          <p>সরাসরি Nagad নম্বরে উত্তোলন</p>
+        </div>
+        <div class="payment-card">
+          <div class="payment-logo rocket-color">Ro</div>
+          <h4>Rocket</h4>
+          <p>সরাসরি Rocket নম্বরে উত্তোলন</p>
+        </div>
+      </div>
+      <div class="withdrawal-rules">
+        <h3>উত্তোলনের নিয়মাবলী</h3>
+        <ul>
+          <li>✅ ন্যূনতম উত্তোলন: ১০০ BDT</li>
+          <li>✅ Manual verification সাপেক্ষে প্রসেস হয়</li>
+          <li>✅ Idempotency key দিয়ে duplicate request আটকানো হয়</li>
+          <li>✅ Fraud-flagged account উত্তোলন করতে পারবে না</li>
+          <li>✅ প্রতিটি উত্তোলন immutable ledger-এ রেকর্ড থাকে</li>
+          <li>⚠️ Processing time পরিবর্তন হতে পারে</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECURITY
+  ============================================================ -->
+  <section class="section" id="security">
+    <div class="container">
+      <div class="section-badge">নিরাপত্তা</div>
+      <h2 class="section-title">আপনার অ্যাকাউন্ট সুরক্ষিত</h2>
+      <div class="security-grid">
+        <div class="security-item">
+          <span class="security-icon">🔐</span>
+          <div>
+            <h4>HMAC-SHA256 Authentication</h4>
+            <p>Telegram initData-এর cryptographic validation। কোনো password ছাড়াই সম্পূর্ণ নিরাপদ লগইন।</p>
+          </div>
+        </div>
+        <div class="security-item">
+          <span class="security-icon">⚡</span>
+          <div>
+            <h4>JWT Token Security</h4>
+            <p>256-bit random secret, ৭ দিনের expiry। Server-side validation প্রতিটি request-এ।</p>
+          </div>
+        </div>
+        <div class="security-item">
+          <span class="security-icon">🔒</span>
+          <div>
+            <h4>Immutable Financial Ledger</h4>
+            <p>ACID-compliant MongoDB transactions। লেনদেন একবার রেকর্ড হলে পরিবর্তন বা মুছে ফেলা সম্ভব নয়।</p>
+          </div>
+        </div>
+        <div class="security-item">
+          <span class="security-icon">🛡️</span>
+          <div>
+            <h4>Fraud Detection System</h4>
+            <p>Real-time fraud event tracking। Suspicious activity শনাক্ত হলে account restrict করা হয়।</p>
+          </div>
+        </div>
+        <div class="security-item">
+          <span class="security-icon">🚦</span>
+          <div>
+            <h4>Rate Limiting</h4>
+            <p>সমস্ত endpoint-এ rate limiting। Automation, scripting ও brute force সম্পূর্ণ blocked।</p>
+          </div>
+        </div>
+        <div class="security-item">
+          <span class="security-icon">🔑</span>
+          <div>
+            <h4>Idempotency Protection</h4>
+            <p>Duplicate reward ও withdrawal prevention। একই transaction দুইবার process হওয়া সম্ভব নয়।</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       RULES
+  ============================================================ -->
+  <section class="section section-alt" id="rules">
+    <div class="container">
+      <div class="section-badge">নিয়মাবলী</div>
+      <h2 class="section-title">গুরুত্বপূর্ণ নিয়ম</h2>
+      <div class="rules-list">
+        <div class="rule-item rule-ok">
+          <span>✅</span>
+          <p>একটি Telegram account = একটি FA AGENCY™ EARN account</p>
+        </div>
+        <div class="rule-item rule-ok">
+          <span>✅</span>
+          <p>Task সততার সাথে সম্পন্ন করতে হবে</p>
+        </div>
+        <div class="rule-item rule-ok">
+          <span>✅</span>
+          <p>সমস্ত পুরস্কার server-যাচাইকৃত ও configurable</p>
+        </div>
+        <div class="rule-item rule-ban">
+          <span>🚫</span>
+          <p>একাধিক account, VPN abuse বা automation script ব্যবহার সম্পূর্ণ নিষিদ্ধ</p>
+        </div>
+        <div class="rule-item rule-ban">
+          <span>🚫</span>
+          <p>Fake proof, screenshot manipulation বা task abuse করলে account permanently banned হবে</p>
+        </div>
+        <div class="rule-item rule-ban">
+          <span>🚫</span>
+          <p>Self-referral, fake referral account তৈরি সম্পূর্ণ নিষিদ্ধ</p>
+        </div>
+        <div class="rule-item rule-ok">
+          <span>⚠️</span>
+          <p>Platform earnings-এর উপর নির্ভর করে জীবনের বড় সিদ্ধান্ত নেবেন না</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FAQ
+  ============================================================ -->
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="section-badge">FAQ</div>
+      <h2 class="section-title">সাধারণ প্রশ্নাবলী</h2>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">FA AGENCY™ EARN কি সম্পূর্ণ বিনামূল্যে? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">হ্যাঁ, FA AGENCY™ EARN-এ যোগ দিতে কোনো টাকা লাগে না। শুধু Telegram account দরকার।</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Withdrawal কতদিনে পাব? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">Withdrawal manually processed হয়। Processing time ভিন্ন হতে পারে। Admin approval-এর পর সরাসরি আপনার mobile banking-এ পাঠানো হবে।</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Task pending থাকলে কী করব? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">Admin team সব task submission review করে। সময় লাগতে পারে। Support-এ যোগাযোগ করতে পারেন।</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Referral bonus কখন পাব? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">আপনার referred বন্ধু যখন qualification criteria পূরণ করবে (active account, fraud-free), তখন server automatically reward credit করবে।</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Account বন্ধ হলে কী হবে? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">নিয়ম ভঙ্গের কারণে account restricted বা suspended হতে পারে। এক্ষেত্রে support-এ appeal করা যাবে।</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">কোন দেশ থেকে ব্যবহার করা যাবে? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">বাংলাদেশ থেকে Telegram account দিয়ে ব্যবহার করা যাবে। Withdrawal বর্তমানে bKash, Nagad ও Rocket-এর মাধ্যমে বাংলাদেশে সীমাবদ্ধ।</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SUPPORT
+  ============================================================ -->
+  <section class="section section-alt" id="support">
+    <div class="container">
+      <div class="section-badge">সহায়তা</div>
+      <h2 class="section-title">আমাদের সাথে যোগাযোগ করুন</h2>
+      <div class="support-cards">
+        <a href="https://t.me/FAAgencyEarnBot" target="_blank" rel="noopener" class="support-card">
+          <span class="support-icon">🤖</span>
+          <h4>Telegram Bot</h4>
+          <p>@FAAgencyEarnBot-এ সরাসরি মেসেজ করুন</p>
+        </a>
+        <a href="https://t.me/FAAgencySupport" target="_blank" rel="noopener" class="support-card">
+          <span class="support-icon">💬</span>
+          <h4>Support Group</h4>
+          <p>@FAAgencySupport গ্রুপে প্রশ্ন করুন</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       LAUNCH CTA
+  ============================================================ -->
+  <section class="launch-cta-section">
+    <div class="container" style="text-align:center;">
+      <div class="launch-glow"></div>
+      <span style="font-size:3rem;">👑</span>
+      <h2 class="launch-cta-title">এখনই শুরু করুন</h2>
+      <p class="launch-cta-sub">Telegram-এ FA AGENCY™ EARN Bot খুলুন এবং আজই শুরু করুন।</p>
+      <a href="https://t.me/FAAgencyEarnBot" target="_blank" rel="noopener" class="btn btn-launch">
+        ✈️ Launch Mini App on Telegram
+      </a>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <span style="font-size:1.5rem;">👑</span>
+          <span class="footer-brand-text">FA AGENCY<sup>™</sup> <span class="earn-word">EARN</span></span>
+        </div>
+        <div class="footer-links">
+          <a href="#earning">Earning Methods</a>
+          <a href="#rules">Terms &amp; Rules</a>
+          <a href="#security">Security</a>
+          <a href="#support">Support</a>
+        </div>
+      </div>
+      <div class="footer-disclaimer">
+        ⚠️ FA AGENCY™ EARN কোনো guaranteed income দাবি করে না। উপার্জনের পরিমাণ ব্যক্তির কাজ ও platform-এর শর্তাবলীর উপর নির্ভরশীল।
+        এটি একটি Telegram-ভিত্তিক earning platform। Bangladesh-এর প্রযোজ্য আইন মেনে চলা ব্যবহারকারীর দায়িত্ব।
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025 FA AGENCY™ EARN. All rights reserved.</span>
+        <span>fa-agency.online</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // Mobile nav toggle
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+    });
+
+    function closeNav() {
+      mobileMenu.classList.remove('open');
+    }
+
+    // FAQ accordion
+    function toggleFaq(el) {
+      const answer = el.querySelector('.faq-a');
+      const arrow = el.querySelector('.faq-arrow');
+      const isOpen = el.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(item => {
+        item.classList.remove('open');
+        item.querySelector('.faq-a').style.maxHeight = '0';
+        item.querySelector('.faq-arrow').textContent = '▼';
+      });
+      if (!isOpen) {
+        el.classList.add('open');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+        arrow.textContent = '▲';
+      }
+    }
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          closeNav();
+        }
+      });
+    });
+
+    // Intersection Observer for fade-in animations
+    const observerOptions = { threshold: 0.1 };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.feature-card, .step-card, .earn-card, .security-item, .faq-item, .info-card, .payment-card, .ref-step, .support-card').forEach(el => {
+      el.classList.add('fade-in-target');
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>

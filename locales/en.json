@@ -1,0 +1,31 @@
+{
+  "brand": "FA AGENCY™ EARN",
+  "tagline": "Earn • Grow • Together",
+  "home": "Home",
+  "ads": "Ads",
+  "tasks": "Tasks",
+  "refer": "Refer",
+  "profile": "Profile",
+  "balance": "Balance",
+  "available_balance": "Available Balance",
+  "watch_ads": "Watch Ads",
+  "daily_bonus": "Daily Bonus",
+  "wallet": "Wallet",
+  "withdraw": "Withdraw",
+  "support": "Support",
+  "terms": "Terms",
+  "privacy": "Privacy",
+  "maintenance": "The system is currently under maintenance. Your previous balance is safely preserved.",
+  "why_trust": "Why Trust FA AGENCY™ EARN?",
+  "trust_points": [
+    "Real advertising",
+    "Real tasks",
+    "Transparent rewards",
+    "No deposit required for normal earning",
+    "Wallet history",
+    "Withdrawal records",
+    "Support",
+    "Anti-fraud protection",
+    "Clear policies"
+  ]
+}

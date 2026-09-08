@@ -1,0 +1,23 @@
+{
+  "name": "fa-agency-earn",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace apps/mini-app && npm run build --workspace apps/admin-panel && npm run build --workspace apps/api",
+    "test": "npm test --workspace apps/api",
+    "test:integration": "npm run test:integration --workspace apps/api",
+    "dev:api": "npm run dev --workspace apps/api",
+    "dev:mini": "npm run dev --workspace apps/mini-app",
+    "dev:admin": "npm run dev --workspace apps/admin-panel",
+    "dev:bot": "npm run start --workspace apps/bot",
+    "test:bot": "npm test --workspace apps/bot"
+  },
+  "dependencies": {
+    "express-rate-limit": "^8.7.0",
+    "jsonwebtoken": "^9.0.3"
+  }
+}

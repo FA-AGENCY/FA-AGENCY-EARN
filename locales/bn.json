@@ -1,0 +1,31 @@
+{
+  "brand": "FA AGENCY™ EARN",
+  "tagline": "Earn • Grow • Together",
+  "home": "হোম",
+  "ads": "অ্যাডস",
+  "tasks": "টাস্ক",
+  "refer": "রেফার",
+  "profile": "প্রোফাইল",
+  "balance": "ব্যালেন্স",
+  "available_balance": "Available Balance",
+  "watch_ads": "Watch Ads",
+  "daily_bonus": "Daily Bonus",
+  "wallet": "Wallet",
+  "withdraw": "Withdraw",
+  "support": "সাপোর্ট",
+  "terms": "শর্তাবলী",
+  "privacy": "গোপনীয়তা",
+  "maintenance": "সিস্টেম বর্তমানে maintenance-এর মধ্যে আছে। আপনার পূর্বের balance নিরাপদে সংরক্ষিত আছে।",
+  "why_trust": "Why Trust FA AGENCY™ EARN?",
+  "trust_points": [
+    "Real advertising",
+    "Real tasks",
+    "Transparent rewards",
+    "No deposit required for normal earning",
+    "Wallet history",
+    "Withdrawal records",
+    "Support",
+    "Anti-fraud protection",
+    "Clear policies"
+  ]
+}
