@@ -1,81 +1,41 @@
-import crypto from 'crypto';
-import { config } from '../config/index.js';
+﻿import crypto from 'crypto';
 
 export class TelegramAuthService {
-  validateInitData(initData) {
-    if (!initData || typeof initData !== 'string') {
-      throw new Error('Telegram initData is required.');
-    }
+  verifyInitData(initData, botToken) {
+    if (!initData || !botToken) return { isValid: false, user: null };
 
-    if (!config.telegramBotToken) {
-      throw new Error('TELEGRAM_BOT_TOKEN is not configured.');
-    }
-
-    const params = new URLSearchParams(initData);
-    const payload = {};
-    for (const [key, value] of params.entries()) {
-      payload[key] = value;
-    }
-
-    const hash = payload.hash;
-    if (!hash) {
-      throw new Error('Telegram initData hash is missing.');
-    }
-
-    const authDate = Number(payload.auth_date || 0);
-    if (!authDate || Number.isNaN(authDate)) {
-      throw new Error('Telegram auth_date is missing or invalid.');
-    }
-
-    const now = Math.floor(Date.now() / 1000);
-    const age = now - authDate;
-    if (age < -60) {
-      throw new Error('Telegram auth_date is in the future.');
-    }
-    if (age > config.telegramAuthTtlSeconds) {
-      throw new Error('Telegram authentication data is expired.');
-    }
-
-    const secretKey = crypto
-      .createHmac('sha256', 'WebAppData')
-      .update(config.telegramBotToken)
-      .digest();
-
-    const sortedKeys = Object.keys(payload)
-      .filter((key) => key !== 'hash')
-      .sort();
-
-    const dataCheckString = sortedKeys
-      .map((key) => `${key}=${payload[key]}`)
-      .join('\n');
-
-    const expectedHash = crypto
-      .createHmac('sha256', secretKey)
-      .update(dataCheckString)
-      .digest('hex');
-
-    if (hash !== expectedHash) {
-      throw new Error('Telegram initData signature is invalid.');
-    }
-
-    let userData;
     try {
-      userData = JSON.parse(payload.user || '{}');
-    } catch (_error) {
-      throw new Error('Telegram user payload is malformed.');
-    }
+      const urlParams = new URLSearchParams(initData);
+      const hash = urlParams.get('hash');
+      urlParams.delete('hash');
 
-    if (!userData || !userData.id) {
-      throw new Error('Telegram user payload missing.');
-    }
+      const params = Array.from(urlParams.entries());
+      params.sort(([a], [b]) => a.localeCompare(b));
 
-    return {
-      telegramId: String(userData.id),
-      firstName: userData.first_name || '',
-      lastName: userData.last_name || '',
-      username: userData.username || '',
-      photoUrl: userData.photo_url || '',
-      languageCode: userData.language_code || 'bn'
-    };
+      const dataCheckString = params
+        .map(([key, value]) => `${key}=${value}`)
+        .join('\n');
+
+      const secretKey = crypto
+        .createHmac('sha256', 'WebAppData')
+        .update(botToken)
+        .digest();
+
+      const calculatedHash = crypto
+        .createHmac('sha256', secretKey)
+        .update(dataCheckString)
+        .digest('hex');
+
+      const isValid = calculatedHash === hash;
+      const userString = urlParams.get('user');
+      const user = userString ? JSON.parse(userString) : null;
+
+      return { isValid, user };
+    } catch (error) {
+      return { isValid: false, user: null };
+    }
   }
 }
+
+const defaultTelegramAuthService = new TelegramAuthService();
+export default defaultTelegramAuthService;

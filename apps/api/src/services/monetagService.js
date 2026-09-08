@@ -1,39 +1,40 @@
-export class MonetagProvider {
-  constructor(config = {}) {
-    this.zoneId = config.zoneId || '';
-    this.rewardEnabled = Boolean(config.rewardEnabled);
-    this.enabled = Boolean(this.zoneId);
-    this.formats = {
-      REWARDED_INTERSTITIAL: 'rewarded-interstitial',
-      REWARDED_POPUP: 'rewarded-pop',
-      IN_APP_INTERSTITIAL: 'in-app-interstitial'
-    };
+﻿import crypto from 'crypto';
+
+export class MonetagService {
+  constructor() {
+    this.secretKey = process.env.MONETAG_POSTBACK_SECRET || 'default_secret_key';
+    this.cooldownSeconds = 30; 
   }
 
-  async createSession({ adType = 'REWARDED_INTERSTITIAL' } = {}) {
-    if (!this.enabled) {
-      return {
-        provider: 'Monetag',
-        status: 'DISABLED',
-        message: 'Monetag zone is not configured.'
-      };
+  verifyPostbackSignature(data, receivedSignature) {
+    if (!receivedSignature || !this.secretKey) {
+      return false;
     }
 
-    if (!this.formats[adType]) {
-      throw new Error('Unsupported Monetag ad format.');
-    }
+    try {
+      const generatedSignature = crypto
+        .createHmac('sha256', this.secretKey)
+        .update(typeof data === 'string' ? data : JSON.stringify(data))
+        .digest('hex');
 
-    return {
-      provider: 'Monetag',
-      status: 'READY',
-      zoneId: this.zoneId,
-      format: this.formats[adType],
-      rewardEnabled: this.rewardEnabled,
-      sdk: 'monetag-tg-sdk'
-    };
+      return crypto.timingSafeEqual(
+        Buffer.from(generatedSignature),
+        Buffer.from(receivedSignature)
+      );
+    } catch (err) {
+      return false;
+    }
   }
 
-  async verifyCompletion() {
-    throw new Error('Monetag does not document a server-verifiable completion callback for this SDK.');
+  isEligibleForNextAd(lastAdWatchedAt) {
+    if (!lastAdWatchedAt) return true;
+
+    const now = new Date();
+    const elapsedSeconds = (now.getTime() - new Date(lastAdWatchedAt).getTime()) / 1000;
+    return elapsedSeconds >= this.cooldownSeconds;
   }
 }
+
+export const MonetagProvider = MonetagService;
+const defaultMonetagService = new MonetagService();
+export default defaultMonetagService;
