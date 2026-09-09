@@ -20,7 +20,7 @@ const taskLogos = {
 const SUPER_ADMIN_ID = "980047040";
 const SUPER_ADMIN_USERNAME = "Md_Aman_ullah";
 
-// Premium Facebook / Meta Style Blue Tick Badge Component
+// Official Facebook Style Blue Tick Badge
 const VerifiedBadge = ({ size = 18 }) => (
   <svg
     width={size}
@@ -63,20 +63,7 @@ export default function App() {
   const [totalEarn, setTotalEarn] = useState(() => {
     return parseFloat(localStorage.getItem("fa_total_earn")) || 0.00;
   });
-  const [referrals, setReferrals] = useState(() => {
-    return parseInt(localStorage.getItem("fa_user_ref_count")) || 0;
-  });
-
   const [showBalance, setShowBalance] = useState(true);
-
-  // Sync Financials
-  useEffect(() => {
-    localStorage.setItem("fa_user_balance", balance.toString());
-    localStorage.setItem("fa_today_earn", todayEarn.toString());
-    localStorage.setItem("fa_total_earn", totalEarn.toString());
-    localStorage.setItem("fa_user_ref_count", referrals.toString());
-    localStorage.setItem("fa_rate", usdToBdtRate.toString());
-  }, [balance, todayEarn, totalEarn, referrals, usdToBdtRate]);
 
   // Real Telegram User Detection
   const [currentUser, setCurrentUser] = useState({
@@ -106,6 +93,31 @@ export default function App() {
 
   const isSuperAdmin = String(currentUser.id) === SUPER_ADMIN_ID || currentUser.username === SUPER_ADMIN_USERNAME;
 
+  // Referral Friends System & Withdrawal Rules Tracking
+  const [referralList, setReferralList] = useState(() => {
+    const saved = localStorage.getItem("fa_referral_friends");
+    return saved ? JSON.parse(saved) : [
+      { id: 1, name: "Tanvir Hasan", date: "Yesterday", status: "Active", earnedUSD: 0.83, withdrawnUSD: 10.00, qualified: true },
+      { id: 2, name: "MD Rakib", date: "2 days ago", status: "Active", earnedUSD: 0.83, withdrawnUSD: 0.00, qualified: true },
+      { id: 3, name: "Shakil Khan", date: "3 days ago", status: "Pending Task", earnedUSD: 0.00, withdrawnUSD: 0.00, qualified: false }
+    ];
+  });
+
+  const referrals = referralList.length;
+  const qualifiedReferrals = referralList.filter(f => f.qualified).length;
+  const requiredReferralsForWithdraw = 10;
+  const milestoneTarget = 100;
+  const milestonePercent = Math.min(100, Math.round((qualifiedReferrals / milestoneTarget) * 100));
+
+  // Sync Financials & Referrals
+  useEffect(() => {
+    localStorage.setItem("fa_user_balance", balance.toString());
+    localStorage.setItem("fa_today_earn", todayEarn.toString());
+    localStorage.setItem("fa_total_earn", totalEarn.toString());
+    localStorage.setItem("fa_rate", usdToBdtRate.toString());
+    localStorage.setItem("fa_referral_friends", JSON.stringify(referralList));
+  }, [balance, todayEarn, totalEarn, usdToBdtRate, referralList]);
+
   // KYC Submissions Queue & Status
   const [kycQueue, setKycQueue] = useState(() => {
     const saved = localStorage.getItem("fa_kyc_queue");
@@ -121,114 +133,24 @@ export default function App() {
   const [nidBack, setNidBack] = useState(null);
   const [userSelfie, setUserSelfie] = useState(null);
 
-  // COMPLETE COMPREHENSIVE TASKS LIST
+  // Complete Social Tasks
   const [dailyTasks, setDailyTasks] = useState([
-    {
-      id: 1,
-      title: "Join Official Telegram Channel",
-      platform: "telegram",
-      rewardUSD: 0.10,
-      link: "https://t.me/FAAgencyEarnAppBot",
-      durationSec: 30,
-      instructions: "অফিসিয়াল টেলিগ্রাম চ্যানেলে জয়েন করে স্ক্রিনশট দিন।",
-      status: "pending"
-    },
-    {
-      id: 2,
-      title: "Join Official WhatsApp Group",
-      platform: "whatsapp",
-      rewardUSD: 0.10,
-      link: "https://chat.whatsapp.com/",
-      durationSec: 30,
-      instructions: "আমাদের অফিসিয়াল হোয়াটসঅ্যাপ গ্রুপে যুক্ত হয়ে স্ক্রিনশট দিন।",
-      status: "pending"
-    },
-    {
-      id: 3,
-      title: "Follow Official Facebook Page",
-      platform: "facebook",
-      rewardUSD: 0.15,
-      link: "https://facebook.com/",
-      durationSec: 30,
-      instructions: "ফেসবুক পেজে লাইক ও ফলো দিয়ে স্ক্রিনশট তুলে জমা দিন।",
-      status: "pending"
-    },
-    {
-      id: 4,
-      title: "Subscribe YouTube Channel & Bell",
-      platform: "youtube",
-      rewardUSD: 0.20,
-      link: "https://youtube.com/",
-      durationSec: 60,
-      instructions: "ইউটিউব চ্যানেল সাবস্ক্রাইব করে বেল অন রেখে স্ক্রিনশট দিন।",
-      status: "pending"
-    },
-    {
-      id: 5,
-      title: "Follow Official TikTok Account",
-      platform: "tiktok",
-      rewardUSD: 0.15,
-      link: "https://tiktok.com/",
-      durationSec: 30,
-      instructions: "আমাদের অফিসিয়াল টিকটক আইডিতে ফলো করে স্ক্রিনশট দিন।",
-      status: "pending"
-    },
-    {
-      id: 6,
-      title: "Follow on Twitter (X)",
-      platform: "twitter",
-      rewardUSD: 0.10,
-      link: "https://twitter.com/",
-      durationSec: 30,
-      instructions: "টুইটার (X) একাউন্টে ফলো দিয়ে স্ক্রিনশট আপলোড করুন।",
-      status: "pending"
-    },
-    {
-      id: 7,
-      title: "Visit Agency Website (1 Min)",
-      platform: "website",
-      rewardUSD: 0.12,
-      link: "https://apps.fa-agency.online",
-      durationSec: 60,
-      instructions: "ওয়েবসাইটে ১ মিনিট ভিজিট করে যেকোনো পেজের স্ক্রিনশট দিন।",
-      status: "pending"
-    }
+    { id: 1, title: "Join Official Telegram Channel", platform: "telegram", rewardUSD: 0.10, link: "https://t.me/FAAgencyEarnAppBot", status: "pending" },
+    { id: 2, title: "Join Official WhatsApp Group", platform: "whatsapp", rewardUSD: 0.10, link: "https://chat.whatsapp.com/", status: "pending" },
+    { id: 3, title: "Follow Official Facebook Page", platform: "facebook", rewardUSD: 0.15, link: "https://facebook.com/", status: "pending" },
+    { id: 4, title: "Subscribe YouTube Channel & Bell", platform: "youtube", rewardUSD: 0.20, link: "https://youtube.com/", status: "pending" },
+    { id: 5, title: "Follow Official TikTok Account", platform: "tiktok", rewardUSD: 0.15, link: "https://tiktok.com/", status: "pending" },
+    { id: 6, title: "Follow on Twitter (X)", platform: "twitter", rewardUSD: 0.10, link: "https://twitter.com/", status: "pending" },
+    { id: 7, title: "Visit Agency Website (1 Min)", platform: "website", rewardUSD: 0.12, link: "https://apps.fa-agency.online", status: "pending" }
   ]);
 
   // Video Earning Hub
   const [videoTasks, setVideoTasks] = useState([
-    { id: 201, title: "Watch YouTube Official Video (5 Min)", platform: "youtube", rewardUSD: 0.30, link: "https://youtube.com/", duration: "5 Min", durationSec: 300, status: "pending" },
-    { id: 202, title: "Watch TikTok Viral Video (1 Min)", platform: "tiktok", rewardUSD: 0.15, link: "https://tiktok.com/", duration: "1 Min", durationSec: 60, status: "pending" }
+    { id: 201, title: "Watch YouTube Official Video (5 Min)", rewardUSD: 0.30, link: "https://youtube.com/", duration: "5 Min", status: "pending" },
+    { id: 202, title: "Watch TikTok Viral Video (1 Min)", rewardUSD: 0.15, link: "https://tiktok.com/", duration: "1 Min", status: "pending" }
   ]);
 
-  // Task Form State
-  const [editingTask, setEditingTask] = useState(null);
-  const [taskForm, setTaskForm] = useState({
-    title: "",
-    platform: "telegram",
-    rewardUSD: 0.10,
-    link: "",
-    durationSec: 30,
-    instructions: ""
-  });
-
-  const [proofSubmissions, setProofSubmissions] = useState([]);
-  const [withdrawRequests, setWithdrawRequests] = useState([]);
-  const [referralList, setReferralList] = useState([]);
-  const [transactions, setTransactions] = useState([]);
-
-  // Monetag Margin
-  const [monetagConfig, setMonetagConfig] = useState({
-    zoneId: "11756404",
-    rawApiPayout: 0.05,
-    adminProfitMargin: 40
-  });
-
-  const calculatedUserAdReward = parseFloat(
-    (monetagConfig.rawApiPayout * (1 - monetagConfig.adminProfitMargin / 100)).toFixed(3)
-  );
-
-  // Modals
+  // Modals & States
   const [moreModalOpen, setMoreModalOpen] = useState(false);
   const [spinModalOpen, setSpinModalOpen] = useState(false);
   const [leaderboardModalOpen, setLeaderboardModalOpen] = useState(false);
@@ -242,10 +164,12 @@ export default function App() {
   const [videoProofModal, setVideoProofModal] = useState(null);
   const [walletModal, setWalletModal] = useState(null);
   const [profileModal, setProfileModal] = useState(null);
-  const [historyFilter, setHistoryFilter] = useState("all");
-
   const [proofImage1, setProofImage1] = useState(null);
   const [proofImage2, setProofImage2] = useState(null);
+
+  const [proofSubmissions, setProofSubmissions] = useState([]);
+  const [withdrawRequests, setWithdrawRequests] = useState([]);
+  const [transactions, setTransactions] = useState([]);
 
   const [paymentMethods, setPaymentMethods] = useState({ bkash: "", nagad: "", rocket: "" });
   const [selectedMethod, setSelectedMethod] = useState("bkash");
@@ -264,65 +188,10 @@ export default function App() {
   const borderNeon = "rgba(0, 209, 255, 0.2)";
   const availableSlots = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
-  const qualifiedReferrals = referralList.filter(f => f.bonusPaid).length;
-  const milestoneTarget = 100;
-  const milestonePercent = Math.min(100, Math.round((qualifiedReferrals / milestoneTarget) * 100));
+  // Ad Reward Unit Calculation
+  const calculatedUserAdReward = 0.03;
 
-  // KYC User Submit -> Syncs to Admin
-  const handleKycSubmit = () => {
-    if (!nidNumber || !nidFront || !nidBack || !userSelfie) {
-      return alert("অনুগ্রহ করে NID নম্বর, সামনের ছবি, পেছনের ছবি ও নিজের সেলফি আপলোড করুন!");
-    }
-
-    const newEntry = {
-      id: Date.now(),
-      userId: currentUser.id,
-      userName: currentUser.name,
-      username: currentUser.username,
-      nidNumber: nidNumber,
-      nidFront: nidFront,
-      nidBack: nidBack,
-      userSelfie: userSelfie,
-      submittedAt: new Date().toLocaleString(),
-      status: "Pending"
-    };
-
-    const updated = [newEntry, ...kycQueue];
-    setKycQueue(updated);
-    localStorage.setItem("fa_kyc_queue", JSON.stringify(updated));
-
-    setUserKycStatus("Pending");
-    localStorage.setItem("fa_my_kyc_status", "Pending");
-    setProfileModal(null);
-    alert("KYC সাবমিট হয়েছে! FA AGENCY™ সাপোর্ট টিম বিষয়টি পর্যবেক্ষণ করে ব্লু টিক প্রদান করবে।");
-  };
-
-  // Admin KYC Actions
-  const handleApproveKyc = (kyc) => {
-    const updated = kycQueue.filter(k => k.id !== kyc.id);
-    setKycQueue(updated);
-    localStorage.setItem("fa_kyc_queue", JSON.stringify(updated));
-
-    if (String(kyc.userId) === String(currentUser.id)) {
-      setUserKycStatus("Verified");
-      localStorage.setItem("fa_my_kyc_status", "Verified");
-    }
-    alert(`ব্যবহারকারী ${kyc.userName} (ID: ${kyc.userId})-এর KYC অনুমোদিত হয়েছে!`);
-  };
-
-  const handleRejectKyc = (kyc) => {
-    const updated = kycQueue.filter(k => k.id !== kyc.id);
-    setKycQueue(updated);
-    localStorage.setItem("fa_kyc_queue", JSON.stringify(updated));
-
-    if (String(kyc.userId) === String(currentUser.id)) {
-      setUserKycStatus("Rejected");
-      localStorage.setItem("fa_my_kyc_status", "Rejected");
-    }
-    alert(`ব্যবহারকারী ${kyc.userName}-এর KYC বাতিল করা হয়েছে।`);
-  };
-
-  // USER-INTENTIONAL ADS ONLY
+  // Zero Auto-Ads: Triggered strictly by user click
   const triggerMonetagAd = () => {
     if (typeof window.show_11756404 === "function") {
       window.show_11756404().then(() => addAdBonus("Monetag Video Ad")).catch(() => fallbackAd("Video"));
@@ -372,77 +241,76 @@ export default function App() {
       positive: true,
       category: "earn"
     }, ...prev]);
-    alert(`অভিনন্দন! আপনি স্পিন করে $${won.toFixed(2)} USD জিতে নিয়েছেন!`);
+    alert(`অভিনন্দন! আপনি লাকি স্পিন করে $${won.toFixed(2)} USD জিতে নিয়েছেন!`);
     setSpinModalOpen(false);
   };
 
-  // Withdraw Actions
-  const handleApproveWithdraw = (reqId) => {
-    setWithdrawRequests(prev => prev.map(r => r.id === reqId ? { ...r, status: "Approved" } : r));
-    alert("উইথড্র আবেদনটি অ্যাপ্রুভ ও পেইড হিসেবে চিহ্নিত হয়েছে।");
-  };
-
-  const handleRejectWithdraw = (req) => {
-    setBalance(b => parseFloat((b + req.amountUSD).toFixed(2)));
-    setWithdrawRequests(prev => prev.filter(r => r.id !== req.id));
-    alert(`উইথড্র বাতিল করা হয়েছে এবং $${req.amountUSD} ব্যালেন্সে রিফান্ড করা হয়েছে।`);
-  };
-
-  // Proof Actions
-  const handleApproveProof = (sub) => {
-    setBalance(b => parseFloat((b + sub.rewardUSD).toFixed(2)));
-    setTodayEarn(e => parseFloat((e + sub.rewardUSD).toFixed(2)));
-    setTotalEarn(t => parseFloat((t + sub.rewardUSD).toFixed(2)));
-    setProofSubmissions(prev => prev.filter(p => p.id !== sub.id));
-    setTransactions(prev => [{
-      type: `Task Reward: ${sub.taskTitle}`,
-      date: "Just now",
-      amount: `+$${sub.rewardUSD.toFixed(2)}`,
-      positive: true,
-      category: "earn"
-    }, ...prev]);
-    alert(`টাস্ক অনুমোদিত হয়েছে! $${sub.rewardUSD.toFixed(2)} ব্যালেন্সে জমা হয়েছে।`);
-  };
-
-  const handleRejectProof = (subId) => {
-    setProofSubmissions(prev => prev.filter(p => p.id !== subId));
-    alert("টাস্ক প্রুফটি বাতিল করা হয়েছে।");
-  };
-
-  // Task Save
-  const handleSaveTask = (e) => {
-    e.preventDefault();
-    if (!taskForm.title || !taskForm.link) return alert("শিরোনাম ও লিংক প্রদান করুন!");
-
-    if (editingTask) {
-      setDailyTasks(prev => prev.map(t => t.id === editingTask.id ? { ...t, ...taskForm } : t));
-      alert("টাস্ক আপডেট করা হয়েছে!");
-    } else {
-      setDailyTasks([{ id: Date.now(), ...taskForm, status: "pending" }, ...dailyTasks]);
-      alert("নতুন টাস্ক যুক্ত হয়েছে!");
+  // KYC User Submit
+  const handleKycSubmit = () => {
+    if (!nidNumber || !nidFront || !nidBack || !userSelfie) {
+      return alert("অনুগ্রহ করে NID নম্বর, সামনের ছবি, পেছনের ছবি ও নিজের সেলফি আপলোড করুন!");
     }
 
-    setEditingTask(null);
-    setTaskForm({ title: "", platform: "telegram", rewardUSD: 0.10, link: "", durationSec: 30, instructions: "" });
+    const newEntry = {
+      id: Date.now(),
+      userId: currentUser.id,
+      userName: currentUser.name,
+      username: currentUser.username,
+      nidNumber: nidNumber,
+      nidFront: nidFront,
+      nidBack: nidBack,
+      userSelfie: userSelfie,
+      submittedAt: new Date().toLocaleString(),
+      status: "Pending"
+    };
+
+    const updated = [newEntry, ...kycQueue];
+    setKycQueue(updated);
+    localStorage.setItem("fa_kyc_queue", JSON.stringify(updated));
+
+    setUserKycStatus("Pending");
+    localStorage.setItem("fa_my_kyc_status", "Pending");
+    setProfileModal(null);
+    alert("KYC সাবমিট হয়েছে! FA AGENCY™ সাপোর্ট টিম বিষয়টি পর্যবেক্ষণ করে ব্লু টিক প্রদান করবে।");
   };
 
-  const copyReferralLink = () => {
-    const link = `https://t.me/FAAgencyEarnAppBot?start=${currentUser.referralCode}`;
-    navigator.clipboard.writeText(link);
-    alert(`রেফারেল লিংক কপি হয়েছে!\n${link}`);
+  // Admin KYC Actions
+  const handleApproveKyc = (kyc) => {
+    const updated = kycQueue.filter(k => k.id !== kyc.id);
+    setKycQueue(updated);
+    localStorage.setItem("fa_kyc_queue", JSON.stringify(updated));
+
+    if (String(kyc.userId) === String(currentUser.id)) {
+      setUserKycStatus("Verified");
+      localStorage.setItem("fa_my_kyc_status", "Verified");
+    }
+    alert(`ব্যবহারকারী ${kyc.userName}-এর KYC অনুমোদিত হয়েছে!`);
   };
 
-  const handleSelectMethod = (m) => {
-    setSelectedMethod(m);
-    if (m === "bkash") setTargetAccount(paymentMethods.bkash);
-    if (m === "nagad") setTargetAccount(paymentMethods.nagad);
-    if (m === "rocket") setTargetAccount(paymentMethods.rocket);
+  const handleRejectKyc = (kyc) => {
+    const updated = kycQueue.filter(k => k.id !== kyc.id);
+    setKycQueue(updated);
+    localStorage.setItem("fa_kyc_queue", JSON.stringify(updated));
+
+    if (String(kyc.userId) === String(currentUser.id)) {
+      setUserKycStatus("Rejected");
+      localStorage.setItem("fa_my_kyc_status", "Rejected");
+    }
+    alert(`ব্যবহারকারী ${kyc.userName}-এর KYC বাতিল করা হয়েছে।`);
   };
 
+  // Cashout with Referral & Minimum $10 Criteria
   const handleProcessCashout = () => {
     if (!targetAccount) return alert("অ্যাকাউন্ট নম্বর দিন!");
-    if (withdrawAmount < 10 || withdrawAmount % 10 !== 0) return alert("উইথড্র সর্বনিম্ন $10 হতে হবে এবং $10-এর গুণিতক স্লটে তুলতে হবে!");
-    if (balance - withdrawAmount < 1.0) return alert("পর্যাপ্ত ব্যালেন্স নেই! অ্যাকাউন্টে অন্তত $1.00 অবশিষ্ট থাকতে হবে।");
+    if (withdrawAmount < 10 || withdrawAmount % 10 !== 0) {
+      return alert("উইথড্র সর্বনিম্ন $10 হতে হবে এবং $10-এর গুণিতক স্লটে (যেমন: $10, $20, $30...) তুলতে হবে!");
+    }
+    if (qualifiedReferrals < requiredReferralsForWithdraw) {
+      return alert(`উইথড্র করার শর্ত: আপনাকে অন্তত ${requiredReferralsForWithdraw} জন সক্রিয় ফ্রেন্ডকে রেফার করতে হবে!\nআপনার বর্তমান রেফার: ${qualifiedReferrals} জন।`);
+    }
+    if (balance - withdrawAmount < 1.0) {
+      return alert("পর্যাপ্ত ব্যালেন্স নেই! ক্যাশআউটের পর অ্যাকাউন্টে অন্তত $1.00 অবশিষ্ট থাকতে হবে।");
+    }
 
     const bdtEquivalent = withdrawAmount * usdToBdtRate;
     setBalance(prev => parseFloat((prev - withdrawAmount).toFixed(2)));
@@ -467,53 +335,14 @@ export default function App() {
     }, ...prev]);
 
     setWalletModal(null);
-    alert(`উইথড্র রিকোয়েস্ট সফল হয়েছে!\nউত্তোলিত ডলার: $${withdrawAmount}\nটাকা: ৳ ${bdtEquivalent.toLocaleString()}`);
+    alert(`উইথড্র সফলভাবে গ্রহণ করা হয়েছে!\nপরিমাণ: $${withdrawAmount} (৳ ${bdtEquivalent.toLocaleString()} টাকা)\nFA AGENCY™ ফাইন্যান্স টিম সর্বোচ্চ ২৪ ঘণ্টার মধ্যে পেমেন্ট পাঠিয়ে দেবে।`);
   };
 
-  const handleSubmitSocialProof = () => {
-    if (!proofImage1) return alert("স্ক্রিনশট সিলেক্ট করুন!");
-    setDailyTasks(prev => prev.map(t => t.id === socialProofModal.id ? { ...t, status: "reviewing" } : t));
-    setProofSubmissions([{
-      id: Date.now(),
-      user: currentUser.name,
-      taskTitle: socialProofModal.title,
-      type: "social",
-      rewardUSD: socialProofModal.rewardUSD,
-      startProof: proofImage1,
-      endProof: null,
-      startTime: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      endTime: ""
-    }, ...proofSubmissions]);
-    setSocialProofModal(null);
-    setProofImage1(null);
-    alert("প্রমাণপত্র জমা হয়েছে! FA AGENCY™ সাপোর্ট টিম যাচাই করে ব্যালেন্সে ডলার যুক্ত করবে।");
+  const copyReferralLink = () => {
+    const link = `https://t.me/FAAgencyEarnAppBot?start=${currentUser.referralCode}`;
+    navigator.clipboard.writeText(link);
+    alert(`রেফারেল লিংক কপি হয়েছে!\n${link}`);
   };
-
-  const handleSubmitVideoProof = () => {
-    if (!proofImage1 || !proofImage2) return alert("ভিডিও শুরুর ও শেষের ২টি স্ক্রিনশটই আবশ্যক!");
-    setVideoTasks(prev => prev.map(v => v.id === videoProofModal.id ? { ...v, status: "reviewing" } : v));
-    setProofSubmissions([{
-      id: Date.now(),
-      user: currentUser.name,
-      taskTitle: videoProofModal.title,
-      type: "video",
-      rewardUSD: videoProofModal.rewardUSD,
-      startProof: proofImage1,
-      endProof: proofImage2,
-      startTime: "04:10 AM",
-      endTime: "04:15 AM"
-    }, ...proofSubmissions]);
-    setVideoProofModal(null);
-    setProofImage1(null);
-    setProofImage2(null);
-    alert("ভিডিওর ২টি স্ক্রিনশট জমা হয়েছে! FA AGENCY™ সাপোর্ট টিম যাচাই করে অ্যাপ্রুভ করবে।");
-  };
-
-  const filteredTransactions = transactions.filter(t => {
-    if (historyFilter === "earn") return t.category === "earn";
-    if (historyFilter === "withdraw") return t.category === "withdraw";
-    return true;
-  });
 
   return (
     <div style={{
@@ -528,7 +357,7 @@ export default function App() {
       boxSizing: "border-box"
     }}>
 
-      {/* Header */}
+      {/* Top Header */}
       <header style={{
         display: "flex",
         alignItems: "center",
@@ -552,14 +381,9 @@ export default function App() {
             justifyContent: "center",
             fontWeight: "bold",
             border: "2px solid #00D1FF",
-            overflow: "hidden",
-            boxShadow: "0 0 10px rgba(0,209,255,0.4)"
+            overflow: "hidden"
           }}>
-            {currentUser.avatar ? (
-              <img src={currentUser.avatar} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            ) : (
-              "FA"
-            )}
+            {currentUser.avatar ? <img src={currentUser.avatar} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : "FA"}
           </div>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
@@ -582,297 +406,94 @@ export default function App() {
                 borderRadius: "20px",
                 fontSize: "11px",
                 fontWeight: "bold",
-                cursor: "pointer",
-                boxShadow: "0 2px 10px rgba(245, 158, 11, 0.4)"
+                cursor: "pointer"
               }}>
               {isAdminView ? "Exit Admin" : "⚡ Admin"}
             </button>
           )}
-
-          <div style={{
-            width: "38px",
-            height: "38px",
-            borderRadius: "10px",
-            background: cardBg,
-            border: `1px solid ${borderNeon}`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer"
-          }}>
+          <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: cardBg, border: `1px solid ${borderNeon}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
             🔔
           </div>
         </div>
       </header>
 
-      {/* Main Container */}
+      {/* Main Content */}
       <main style={{ padding: "16px" }}>
 
-        {/* ================= ADMIN VIEW ================= */}
+        {/* ADMIN VIEW */}
         {isAdminView ? (
           <div>
             <div style={{ background: "#1E293B", padding: "14px", borderRadius: "12px", marginBottom: "14px", border: "1px solid #F59E0B" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
-                  <h3 style={{ margin: "0 0 2px", color: "#FCD34D", fontSize: "16px" }}>👑 সুপার অ্যাডমিন প্যানেল</h3>
-                  <span style={{ fontSize: "11px", color: "#94A3B8" }}>লগইন: @{currentUser.username} ({currentUser.id})</span>
-                </div>
-                <span style={{ background: "#10B981", color: "#000", fontSize: "10px", fontWeight: "bold", padding: "3px 8px", borderRadius: "6px" }}>SECURE</span>
-              </div>
+              <h3 style={{ margin: "0 0 2px", color: "#FCD34D", fontSize: "16px" }}>👑 সুপার অ্যাডমিন প্যানেল</h3>
+              <span style={{ fontSize: "11px", color: "#94A3B8" }}>লগইন: @{currentUser.username} ({currentUser.id})</span>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "4px", marginBottom: "14px" }}>
-              {[
-                { id: "kyc", label: `KYC (${kycQueue.length})` },
-                { id: "tasks", label: "টাস্ক" },
-                { id: "proofs", label: `প্রুফ (${proofSubmissions.length})` },
-                { id: "withdraws", label: `উইথড্র (${withdrawRequests.length})` },
-                { id: "settings", label: "সেটিংস" }
-              ].map(t => (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "6px", marginBottom: "14px" }}>
+              {["kyc", "proofs", "withdraws"].map(t => (
                 <button
-                  key={t.id}
-                  onClick={() => setAdminTab(t.id)}
+                  key={t}
+                  onClick={() => setAdminTab(t)}
                   style={{
-                    padding: "8px 2px",
+                    padding: "8px 4px",
                     borderRadius: "8px",
-                    border: adminTab === t.id ? "1px solid #00D1FF" : "1px solid #334155",
-                    background: adminTab === t.id ? "rgba(0, 209, 255, 0.2)" : "#070E1E",
-                    color: adminTab === t.id ? "#00D1FF" : "#94A3B8",
-                    fontSize: "10px",
-                    fontWeight: "bold",
-                    cursor: "pointer"
+                    border: adminTab === t ? "1px solid #00D1FF" : "1px solid #334155",
+                    background: adminTab === t ? "rgba(0, 209, 255, 0.2)" : "#070E1E",
+                    color: adminTab === t ? "#00D1FF" : "#94A3B8",
+                    fontSize: "11px",
+                    fontWeight: "bold"
                   }}>
-                  {t.label}
+                  {t.toUpperCase()}
                 </button>
               ))}
             </div>
 
             {adminTab === "kyc" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                <h4 style={{ margin: "0 0 4px", color: "#38BDF8", fontSize: "14px" }}>🆔 পেন্ডিং KYC ভেরিফিকেশন ({kycQueue.length})</h4>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 {kycQueue.length === 0 ? (
-                  <div style={{ textAlign: "center", padding: "30px", color: "#64748B", fontSize: "13px", background: cardBg, borderRadius: "12px" }}>
-                    কোনো KYC রিকোয়েস্ট পেন্ডিং নেই
-                  </div>
+                  <div style={{ textAlign: "center", padding: "30px", color: "#64748B" }}>কোনো KYC রিকোয়েস্ট পেন্ডিং নেই</div>
                 ) : (
-                  kycQueue.map(kyc => (
-                    <div key={kyc.id} style={{ background: "#070E1E", padding: "14px", borderRadius: "12px", border: `1px solid ${borderNeon}` }}>
+                  kycQueue.map(k => (
+                    <div key={k.id} style={{ background: "#070E1E", padding: "12px", borderRadius: "10px", border: "1px solid #334155" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
-                        <span style={{ fontWeight: "bold", fontSize: "13px" }}>{kyc.userName} (@{kyc.username || "N/A"})</span>
-                        <span style={{ color: "#F59E0B", fontSize: "11px", fontWeight: "bold" }}>ID: {kyc.userId}</span>
+                        <b>{k.userName}</b>
+                        <span style={{ color: "#F59E0B" }}>NID: {k.nidNumber}</span>
                       </div>
-                      <div style={{ fontSize: "12px", color: "#10B981", marginBottom: "10px" }}>
-                        NID নম্বর: <b>{kyc.nidNumber}</b>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "6px", marginBottom: "8px" }}>
+                        <img src={k.nidFront} alt="Front" style={{ width: "100%", height: "60px", objectFit: "cover", borderRadius: "4px" }} />
+                        <img src={k.nidBack} alt="Back" style={{ width: "100%", height: "60px", objectFit: "cover", borderRadius: "4px" }} />
+                        <img src={k.userSelfie} alt="Selfie" style={{ width: "100%", height: "60px", objectFit: "cover", borderRadius: "4px" }} />
                       </div>
-
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "6px", marginBottom: "12px" }}>
-                        <div>
-                          <div style={{ fontSize: "9px", color: "#94A3B8", marginBottom: "2px" }}>NID সামনের দিক</div>
-                          <img src={kyc.nidFront} alt="NID Front" style={{ width: "100%", height: "70px", objectFit: "cover", borderRadius: "6px", border: "1px solid #334155" }} />
-                        </div>
-                        <div>
-                          <div style={{ fontSize: "9px", color: "#94A3B8", marginBottom: "2px" }}>NID পেছনের দিক</div>
-                          <img src={kyc.nidBack} alt="NID Back" style={{ width: "100%", height: "70px", objectFit: "cover", borderRadius: "6px", border: "1px solid #334155" }} />
-                        </div>
-                        <div>
-                          <div style={{ fontSize: "9px", color: "#94A3B8", marginBottom: "2px" }}>ইউজারের সেলফি</div>
-                          <img src={kyc.userSelfie} alt="Selfie" style={{ width: "100%", height: "70px", objectFit: "cover", borderRadius: "6px", border: "1px solid #334155" }} />
-                        </div>
-                      </div>
-
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                        <button
-                          onClick={() => handleApproveKyc(kyc)}
-                          style={{ padding: "8px", background: "#10B981", border: "none", borderRadius: "6px", color: "#FFF", fontWeight: "bold", fontSize: "11px", cursor: "pointer" }}>
-                          ✅ Approve (Blue-Tick)
-                        </button>
-                        <button
-                          onClick={() => handleRejectKyc(kyc)}
-                          style={{ padding: "8px", background: "#EF4444", border: "none", borderRadius: "6px", color: "#FFF", fontWeight: "bold", fontSize: "11px", cursor: "pointer" }}>
-                          ❌ Reject
-                        </button>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
+                        <button onClick={() => handleApproveKyc(k)} style={{ padding: "6px", background: "#10B981", border: "none", borderRadius: "4px", color: "#FFF", fontWeight: "bold" }}>Approve (Blue-Tick)</button>
+                        <button onClick={() => handleRejectKyc(k)} style={{ padding: "6px", background: "#EF4444", border: "none", borderRadius: "4px", color: "#FFF", fontWeight: "bold" }}>Reject</button>
                       </div>
                     </div>
                   ))
                 )}
-              </div>
-            )}
-
-            {adminTab === "tasks" && (
-              <div>
-                <div style={{ background: cardBg, padding: "14px", borderRadius: "14px", marginBottom: "14px", border: `1px solid ${borderNeon}` }}>
-                  <h4 style={{ margin: "0 0 12px", color: primaryNeon, fontSize: "14px" }}>
-                    {editingTask ? "✏️ টাস্ক এডিট করুন" : "➕ নতুন টাস্ক যোগ করুন"}
-                  </h4>
-                  <form onSubmit={handleSaveTask} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                    <input
-                      type="text"
-                      placeholder="টাস্ক শিরোনাম"
-                      value={taskForm.title}
-                      onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
-                      style={{ padding: "8px", background: "#070E1E", border: "1px solid #334155", borderRadius: "6px", color: "#FFF", fontSize: "12px" }}
-                    />
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                      <select
-                        value={taskForm.platform}
-                        onChange={(e) => setTaskForm({ ...taskForm, platform: e.target.value })}
-                        style={{ padding: "8px", background: "#070E1E", border: "1px solid #334155", borderRadius: "6px", color: "#FFF", fontSize: "12px" }}>
-                        <option value="telegram">Telegram</option>
-                        <option value="whatsapp">WhatsApp</option>
-                        <option value="youtube">YouTube</option>
-                        <option value="facebook">Facebook</option>
-                        <option value="tiktok">TikTok</option>
-                        <option value="twitter">Twitter (X)</option>
-                        <option value="website">App/Web</option>
-                      </select>
-                      <input
-                        type="number"
-                        step="0.01"
-                        placeholder="রিওয়ার্ড ($)"
-                        value={taskForm.rewardUSD}
-                        onChange={(e) => setTaskForm({ ...taskForm, rewardUSD: parseFloat(e.target.value) || 0.05 })}
-                        style={{ padding: "8px", background: "#070E1E", border: "1px solid #334155", borderRadius: "6px", color: "#FFF", fontSize: "12px" }}
-                      />
-                    </div>
-                    <input
-                      type="url"
-                      placeholder="টাস্ক লিংক"
-                      value={taskForm.link}
-                      onChange={(e) => setTaskForm({ ...taskForm, link: e.target.value })}
-                      style={{ padding: "8px", background: "#070E1E", border: "1px solid #334155", borderRadius: "6px", color: "#FFF", fontSize: "12px" }}
-                    />
-                    <textarea
-                      placeholder="কাজের নির্দেশনা..."
-                      value={taskForm.instructions}
-                      onChange={(e) => setTaskForm({ ...taskForm, instructions: e.target.value })}
-                      rows={2}
-                      style={{ padding: "8px", background: "#070E1E", border: "1px solid #334155", borderRadius: "6px", color: "#FFF", fontSize: "11px", resize: "none" }}
-                    />
-                    <button type="submit" style={{ padding: "10px", background: "linear-gradient(90deg, #00D1FF, #0084FF)", border: "none", borderRadius: "6px", color: "#000", fontWeight: "bold", cursor: "pointer" }}>
-                      {editingTask ? "আপডেট করুন" : "পাবলিশ করুন"}
-                    </button>
-                  </form>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                  {dailyTasks.map(t => (
-                    <div key={t.id} style={{ background: "#070E1E", padding: "10px", borderRadius: "8px", border: "1px solid #334155", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <div>
-                        <div style={{ fontWeight: "bold", fontSize: "12px" }}>{t.title}</div>
-                        <div style={{ fontSize: "10px", color: "#10B981", marginTop: "2px" }}>${t.rewardUSD} • {t.platform}</div>
-                      </div>
-                      <button onClick={() => setDailyTasks(dailyTasks.filter(x => x.id !== t.id))} style={{ padding: "4px 8px", background: "#EF4444", border: "none", borderRadius: "4px", color: "#FFF", fontSize: "10px" }}>
-                        মুছুন
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {adminTab === "proofs" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                {proofSubmissions.length === 0 ? (
-                  <div style={{ textAlign: "center", padding: "30px", color: "#64748B", fontSize: "13px" }}>কোনো টাস্ক যাচাইকরণ পেন্ডিং নেই</div>
-                ) : (
-                  proofSubmissions.map(sub => (
-                    <div key={sub.id} style={{ background: "#070E1E", padding: "12px", borderRadius: "10px", border: "1px solid #334155" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <span style={{ fontWeight: "bold", fontSize: "13px" }}>{sub.user}</span>
-                        <span style={{ color: "#10B981", fontWeight: "bold" }}>+${sub.rewardUSD}</span>
-                      </div>
-                      <div style={{ fontSize: "11px", color: "#94A3B8", margin: "4px 0 8px" }}>{sub.taskTitle}</div>
-                      <img src={sub.startProof} alt="Proof" style={{ width: "100%", height: "120px", objectFit: "cover", borderRadius: "6px", marginBottom: "8px" }} />
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                        <button onClick={() => handleApproveProof(sub)} style={{ padding: "8px", background: "#10B981", border: "none", borderRadius: "6px", color: "#FFF", fontWeight: "bold", fontSize: "11px" }}>✅ Approve</button>
-                        <button onClick={() => handleRejectProof(sub.id)} style={{ padding: "8px", background: "#EF4444", border: "none", borderRadius: "6px", color: "#FFF", fontWeight: "bold", fontSize: "11px" }}>❌ Reject</button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-
-            {adminTab === "withdraws" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                {withdrawRequests.length === 0 ? (
-                  <div style={{ textAlign: "center", padding: "30px", color: "#64748B", fontSize: "13px" }}>কোনো উইথড্র রিকোয়েস্ট নেই</div>
-                ) : (
-                  withdrawRequests.map(req => (
-                    <div key={req.id} style={{ background: "#070E1E", padding: "12px", borderRadius: "10px", border: "1px solid #334155" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <span style={{ fontWeight: "bold", fontSize: "13px" }}>{req.user}</span>
-                        <span style={{ color: "#F59E0B", fontWeight: "bold" }}>{req.status}</span>
-                      </div>
-                      <div style={{ fontSize: "12px", color: "#38BDF8", margin: "4px 0" }}>${req.amountUSD} ≈ ৳ {req.amountBDT} টাকা ({req.method}: {req.account})</div>
-                      {req.status === "Pending" && (
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginTop: "8px" }}>
-                          <button onClick={() => handleApproveWithdraw(req.id)} style={{ padding: "8px", background: "#10B981", border: "none", borderRadius: "6px", color: "#FFF", fontWeight: "bold", fontSize: "11px" }}>✅ Paid</button>
-                          <button onClick={() => handleRejectWithdraw(req)} style={{ padding: "8px", background: "#EF4444", border: "none", borderRadius: "6px", color: "#FFF", fontWeight: "bold", fontSize: "11px" }}>❌ Refund</button>
-                        </div>
-                      )}
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-
-            {adminTab === "settings" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                <div style={{ background: cardBg, padding: "14px", borderRadius: "14px", border: `1px solid ${borderNeon}` }}>
-                  <h4 style={{ margin: "0 0 8px", color: "#10B981", fontSize: "14px" }}>💵 ডলার এক্সচেঞ্জ রেট (USD to BDT)</h4>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <span style={{ fontSize: "13px", fontWeight: "bold" }}>1 USD =</span>
-                    <input
-                      type="number"
-                      value={usdToBdtRate}
-                      onChange={(e) => setUsdToBdtRate(parseFloat(e.target.value) || 120)}
-                      style={{ width: "90px", padding: "8px", background: "#070E1E", border: "1px solid #10B981", color: "#10B981", fontSize: "14px", fontWeight: "bold", borderRadius: "8px", textAlign: "center" }}
-                    />
-                    <span style={{ fontSize: "13px", fontWeight: "bold" }}>BDT</span>
-                  </div>
-                </div>
-
-                <div style={{ background: cardBg, padding: "14px", borderRadius: "14px", border: `1px solid ${borderNeon}` }}>
-                  <h4 style={{ margin: "0 0 10px", color: "#F59E0B", fontSize: "14px" }}>⚙️ Monetag মার্জিন কন্ট্রোল</h4>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                    <span style={{ fontSize: "12px" }}>অ্যাডমিন লাভ (%):</span>
-                    <input
-                      type="number"
-                      value={monetagConfig.adminProfitMargin}
-                      onChange={(e) => setMonetagConfig({ ...monetagConfig, adminProfitMargin: parseInt(e.target.value) || 0 })}
-                      style={{ width: "70px", padding: "6px", background: "#070E1E", border: "1px solid #334155", color: "#38BDF8", textAlign: "center", fontWeight: "bold", borderRadius: "6px" }}
-                    />
-                  </div>
-                  <div style={{ fontSize: "11px", color: "#10B981" }}>ইউজার পাবে: ${calculatedUserAdReward} USD (৳ {(calculatedUserAdReward * usdToBdtRate).toFixed(2)})</div>
-                </div>
               </div>
             )}
           </div>
         ) : (
-          /* ================= USER INTERFACE ================= */
+          /* USER VIEW */
           <div>
-            {/* TAB 1: HOME */}
+            {/* TAB: HOME */}
             {activeTab === "home" && (
               <div>
-                {/* Total Balance Card */}
+                {/* Balance Card */}
                 <div style={{
                   background: "linear-gradient(145deg, #0F234D 0%, #09152F 100%)",
                   border: `1px solid ${borderNeon}`,
                   borderRadius: "20px",
                   padding: "20px",
-                  marginBottom: "16px",
-                  boxShadow: "0 8px 32px rgba(0, 209, 255, 0.1)"
+                  marginBottom: "16px"
                 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                       <span style={{ fontSize: "13px", color: "#94A3B8" }}>Total Balance</span>
-                      <span onClick={() => setShowBalance(!showBalance)} style={{ cursor: "pointer", fontSize: "15px" }}>
-                        {showBalance ? "👁️" : "🙈"}
-                      </span>
+                      <span onClick={() => setShowBalance(!showBalance)} style={{ cursor: "pointer" }}>{showBalance ? "👁️" : "🙈"}</span>
                     </div>
                     <button
-                      onClick={() => { setActiveTab("wallet"); handleSelectMethod("bkash"); setWalletModal("cashout"); }}
+                      onClick={() => { setActiveTab("wallet"); setWalletModal("cashout"); }}
                       style={{
                         background: "linear-gradient(90deg, #00D1FF, #0084FF)",
                         border: "none",
@@ -894,25 +515,14 @@ export default function App() {
                     {showBalance ? `≈ ৳ ${(balance * usdToBdtRate).toLocaleString()} BDT` : "৳ •••••• BDT"}
                   </div>
 
-                  <div style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr 1fr",
-                    borderTop: "1px solid rgba(255,255,255,0.08)",
-                    paddingTop: "12px",
-                    marginTop: "10px",
-                    textAlign: "center"
-                  }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "12px", marginTop: "10px", textAlign: "center" }}>
                     <div>
                       <div style={{ fontSize: "11px", color: "#94A3B8" }}>Today Earn</div>
-                      <div style={{ fontWeight: "700", fontSize: "13px", color: primaryNeon }}>
-                        {showBalance ? `$${todayEarn.toFixed(2)}` : "••••"}
-                      </div>
+                      <div style={{ fontWeight: "700", fontSize: "13px", color: primaryNeon }}>{showBalance ? `$${todayEarn.toFixed(2)}` : "••••"}</div>
                     </div>
                     <div style={{ borderLeft: "1px solid rgba(255,255,255,0.08)", borderRight: "1px solid rgba(255,255,255,0.08)" }}>
                       <div style={{ fontSize: "11px", color: "#94A3B8" }}>Total Earn</div>
-                      <div style={{ fontWeight: "700", fontSize: "13px" }}>
-                        {showBalance ? `$${totalEarn.toFixed(2)}` : "••••"}
-                      </div>
+                      <div style={{ fontWeight: "700", fontSize: "13px" }}>{showBalance ? `$${totalEarn.toFixed(2)}` : "••••"}</div>
                     </div>
                     <div onClick={() => setReferralModalOpen(true)} style={{ cursor: "pointer" }}>
                       <div style={{ fontSize: "11px", color: "#94A3B8" }}>Referral 👥</div>
@@ -929,7 +539,7 @@ export default function App() {
                     { title: "Referral", sub: "৳100 Per Friend", icon: "👥", action: () => setReferralModalOpen(true) },
                     { title: "Games", sub: "Play & Win", icon: "🎮", action: () => setGamesModalOpen(true) },
                     { title: "Offer Wall", sub: "High Rewards", icon: "⭐", action: () => setActiveTab("task") },
-                    { title: "More", sub: "Spin & VIP", icon: "📦", action: () => setMoreModalOpen(true) }
+                    { title: "More", sub: "Spin & Perks", icon: "📦", action: () => setMoreModalOpen(true) }
                   ].map((item, idx) => (
                     <div
                       key={idx}
@@ -949,7 +559,7 @@ export default function App() {
                   ))}
                 </div>
 
-                {/* Referral Mega Banner */}
+                {/* Detailed Referral Mega Banner */}
                 <div
                   onClick={() => setReferralModalOpen(true)}
                   style={{
@@ -957,23 +567,24 @@ export default function App() {
                     border: "1.5px solid #F59E0B",
                     borderRadius: "16px",
                     padding: "14px 16px",
-                    cursor: "pointer",
-                    boxShadow: "0 4px 20px rgba(245, 158, 11, 0.2)"
+                    cursor: "pointer"
                   }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                       <span style={{ fontSize: "18px" }}>🏆</span>
-                      <span style={{ fontSize: "13px", fontWeight: "bold", color: "#FCD34D" }}>রেফারেল মেগা বোনাস</span>
+                      <span style={{ fontSize: "13px", fontWeight: "bold", color: "#FCD34D" }}>রেফারেল নিয়ম ও মেগা বোনাস</span>
                     </div>
                     <span style={{ background: "#F59E0B", color: "#000", fontSize: "11px", fontWeight: "900", padding: "3px 8px", borderRadius: "20px" }}>
                       +$10.00 USD
                     </span>
                   </div>
-                  <p style={{ margin: "0 0 10px", fontSize: "12px", color: "#FEF08A", lineHeight: "1.4" }}>
-                    প্রতি রেফারে <b>৳১০০</b> এবং ১০০ জনকে রেফার করলে সাথে সাথে <b>$10 (৳{(10 * usdToBdtRate).toLocaleString()})</b> স্পেশাল ক্যাশ বোনাস!
+                  <p style={{ margin: "0 0 8px", fontSize: "12px", color: "#FEF08A", lineHeight: "1.5" }}>
+                    • প্রতি রেফারে পাবেন <b>৳ ১০০ টাকা</b> বোনাস!<br/>
+                    • উইথড্র আনলক করতে অন্তত <b>১০ জনকে সফল রেফার</b> করতে হবে এবং সর্বনিম্ন ক্যাশআউট <b>$10 ডলার (৳১,২০০)</b>।<br/>
+                    • ১০০ জনকে রেফার সম্পন্ন করলে সরাসরি পাবেন অতিরিক্ত <b>$10 ডলার ক্যাশ বোনাস</b>!
                   </p>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: "#CBD5E1", marginBottom: "4px" }}>
-                    <span>আপনার অগ্রগতি (Milestone):</span>
+                    <span>সক্রিয় রেফার অগ্রগতি:</span>
                     <span><b>{qualifiedReferrals}</b> / {milestoneTarget} জন ({milestonePercent}%)</span>
                   </div>
                   <div style={{ width: "100%", height: "8px", background: "rgba(0,0,0,0.5)", borderRadius: "10px", overflow: "hidden" }}>
@@ -983,7 +594,7 @@ export default function App() {
               </div>
             )}
 
-            {/* TAB 2: TASKS */}
+            {/* TAB: TASKS */}
             {activeTab === "task" && (
               <div>
                 <div 
@@ -992,7 +603,7 @@ export default function App() {
                     background: "linear-gradient(135deg, #E11D48 0%, #9333EA 100%)",
                     borderRadius: "16px",
                     padding: "16px",
-                    marginBottom: "16px",
+                    marginBottom: "14px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
@@ -1007,32 +618,6 @@ export default function App() {
                   </div>
                 </div>
 
-                <div
-                  onClick={triggerMonetagPopupAd}
-                  style={{
-                    background: "linear-gradient(90deg, #1F1D36 0%, #151426 100%)",
-                    border: "1.5px dashed #A855F7",
-                    borderRadius: "14px",
-                    padding: "12px 14px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    cursor: "pointer",
-                    marginBottom: "14px"
-                  }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <span style={{ fontSize: "24px" }}>⭐</span>
-                    <div>
-                      <div style={{ fontSize: "12px", fontWeight: "bold", color: "#FFF" }}>পপআপ বোনাস অ্যাড দেখুন</div>
-                      <div style={{ fontSize: "10px", color: "#A855F7" }}>বোনাস: +${calculatedUserAdReward} USD</div>
-                    </div>
-                  </div>
-                  <span style={{ background: "#A855F7", color: "#FFF", fontSize: "10px", fontWeight: "bold", padding: "6px 12px", borderRadius: "14px" }}>
-                    Claim
-                  </span>
-                </div>
-
-                {/* Complete Tasks List */}
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                   {dailyTasks.map(task => (
                     <div key={task.id} style={{
@@ -1045,7 +630,7 @@ export default function App() {
                       justifyContent: "space-between"
                     }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                        <div style={{ width: "44px", height: "44px", borderRadius: "50%", background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: "6px" }}>
+                        <div style={{ width: "42px", height: "42px", borderRadius: "50%", background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: "6px" }}>
                           <img src={taskLogos[task.platform] || taskLogos.website} alt={task.platform} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
                         </div>
                         <div>
@@ -1057,18 +642,17 @@ export default function App() {
                       </div>
                       <button
                         onClick={() => { window.open(task.link, "_blank"); setSocialProofModal(task); }}
-                        disabled={task.status !== "pending"}
                         style={{
-                          background: task.status === "reviewing" ? "rgba(234, 179, 8, 0.2)" : "linear-gradient(90deg, #00D1FF, #0066FF)",
-                          border: task.status === "reviewing" ? "1px solid #EAB308" : "none",
+                          background: "linear-gradient(90deg, #00D1FF, #0066FF)",
+                          border: "none",
                           borderRadius: "20px",
                           padding: "8px 16px",
-                          color: task.status === "reviewing" ? "#EAB308" : "#000",
+                          color: "#000",
                           fontWeight: "700",
                           fontSize: "11px",
                           cursor: "pointer"
                         }}>
-                        {task.status === "reviewing" ? "Reviewing ⏳" : "Start"}
+                        Start
                       </button>
                     </div>
                   ))}
@@ -1076,7 +660,7 @@ export default function App() {
               </div>
             )}
 
-            {/* TAB 3: WALLET */}
+            {/* TAB: WALLET */}
             {activeTab === "wallet" && (
               <div>
                 <div style={{ background: cardBg, border: `1px solid ${borderNeon}`, borderRadius: "20px", padding: "20px", textAlign: "center", marginBottom: "16px" }}>
@@ -1085,21 +669,17 @@ export default function App() {
                   <div style={{ display: "inline-block", background: "rgba(0, 209, 255, 0.1)", padding: "4px 12px", borderRadius: "20px", color: "#38BDF8", fontSize: "12px", marginBottom: "16px" }}>
                     1 USD = {usdToBdtRate} BDT • ৳ {(balance * usdToBdtRate).toLocaleString()} টাকা
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-                    <button onClick={() => { handleSelectMethod("bkash"); setWalletModal("cashout"); }} style={{ background: "linear-gradient(90deg, #00D1FF, #0084FF)", border: "none", borderRadius: "12px", padding: "12px", color: "#000", fontWeight: "800", cursor: "pointer" }}>
-                      Cash Out
-                    </button>
-                    <button onClick={() => setWalletModal("historyFilter")} style={{ background: "rgba(255,255,255,0.06)", border: `1px solid ${borderNeon}`, borderRadius: "12px", padding: "12px", color: "#FFF", fontWeight: "600", cursor: "pointer" }}>
-                      Filter History
-                    </button>
-                  </div>
+                  <button onClick={() => setWalletModal("cashout")} style={{ width: "100%", background: "linear-gradient(90deg, #00D1FF, #0084FF)", border: "none", borderRadius: "12px", padding: "12px", color: "#000", fontWeight: "800", cursor: "pointer" }}>
+                    Cash Out
+                  </button>
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                  {filteredTransactions.length === 0 ? (
+                  <div style={{ fontSize: "13px", fontWeight: "bold", color: "#94A3B8", marginBottom: "4px" }}>উইথড্র হিস্ট্রি ও ট্রানজেকশন:</div>
+                  {transactions.length === 0 ? (
                     <div style={{ textAlign: "center", padding: "20px", color: "#64748B", fontSize: "12px" }}>এখনও কোনো লেনদেন সম্পন্ন হয়নি</div>
                   ) : (
-                    filteredTransactions.map((tx, idx) => (
+                    transactions.map((tx, idx) => (
                       <div key={idx} style={{ background: cardBg, borderRadius: "12px", padding: "12px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <div>
                           <div style={{ fontSize: "13px", fontWeight: "600" }}>{tx.type}</div>
@@ -1113,7 +693,7 @@ export default function App() {
               </div>
             )}
 
-            {/* TAB 4: PROFILE */}
+            {/* TAB: PROFILE */}
             {activeTab === "profile" && (
               <div>
                 <div style={{ background: cardBg, border: `1px solid ${borderNeon}`, borderRadius: "16px", padding: "20px", textAlign: "center", marginBottom: "16px" }}>
@@ -1128,13 +708,13 @@ export default function App() {
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                  <div onClick={() => { setEditName(currentUser.name); setEditUsername(currentUser.username); setProfileModal("editProfile"); }} style={{ background: cardBg, border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", padding: "14px 16px", display: "flex", justifyContent: "space-between", cursor: "pointer" }}>
+                  <div onClick={() => setProfileModal("editProfile")} style={{ background: cardBg, borderRadius: "12px", padding: "14px 16px", display: "flex", justifyContent: "space-between", cursor: "pointer" }}>
                     <span>✏️ Edit Profile</span><span>›</span>
                   </div>
-                  <div onClick={() => { setEditBkash(paymentMethods.bkash); setEditNagad(paymentMethods.nagad); setEditRocket(paymentMethods.rocket); setProfileModal("paymentSettings"); }} style={{ background: cardBg, border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", padding: "14px 16px", display: "flex", justifyContent: "space-between", cursor: "pointer" }}>
+                  <div onClick={() => setProfileModal("paymentSettings")} style={{ background: cardBg, borderRadius: "12px", padding: "14px 16px", display: "flex", justifyContent: "space-between", cursor: "pointer" }}>
                     <span>💳 Payment Settings</span><span>›</span>
                   </div>
-                  <div onClick={() => setProfileModal("kyc")} style={{ background: cardBg, border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", padding: "14px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
+                  <div onClick={() => setProfileModal("kyc")} style={{ background: cardBg, borderRadius: "12px", padding: "14px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
                     <span>🆔 KYC Verification</span>
                     <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                       <span style={{ fontSize: "11px", color: userKycStatus === "Verified" ? "#00D1FF" : (userKycStatus === "Pending" ? "#F59E0B" : "#EF4444"), fontWeight: "bold" }}>
@@ -1143,11 +723,8 @@ export default function App() {
                       {userKycStatus === "Verified" && <VerifiedBadge size={14} />}
                     </div>
                   </div>
-                  <div onClick={() => setProfileModal("support")} style={{ background: cardBg, border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", padding: "14px 16px", display: "flex", justifyContent: "space-between", cursor: "pointer" }}>
+                  <div onClick={() => setProfileModal("support")} style={{ background: cardBg, borderRadius: "12px", padding: "14px 16px", display: "flex", justifyContent: "space-between", cursor: "pointer" }}>
                     <span>🎧 Support & Help</span><span>›</span>
-                  </div>
-                  <div onClick={() => setProfileModal("terms")} style={{ background: cardBg, border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", padding: "14px 16px", display: "flex", justifyContent: "space-between", cursor: "pointer" }}>
-                    <span>📜 Terms & Conditions</span><span>›</span>
                   </div>
                 </div>
               </div>
@@ -1157,30 +734,175 @@ export default function App() {
 
       </main>
 
-      {/* ================= MODAL: MORE HUB ================= */}
+      {/* ================= MODAL: MORE HUB (GORGEOUS COLORING CARDS) ================= */}
       {moreModalOpen && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 350, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
-          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "20px", width: "100%", maxWidth: "380px", padding: "20px", position: "relative" }}>
-            <button onClick={() => setMoreModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px", cursor: "pointer" }}>✖</button>
-            <h3 style={{ margin: "0 0 16px", color: primaryNeon }}>📦 More Features</h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              <div onClick={() => { setMoreModalOpen(false); setSpinModalOpen(true); }} style={{ background: cardBg, padding: "12px", borderRadius: "10px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span>🎡 Lucky Spin Wheel</span>
-                <span style={{ color: "#10B981", fontSize: "11px" }}>Free Bonus ›</span>
+          <div style={{ background: "#0B1B3B", border: `1.5px solid ${primaryNeon}`, borderRadius: "24px", width: "100%", maxWidth: "390px", padding: "22px", position: "relative", boxShadow: "0 0 30px rgba(0,209,255,0.25)" }}>
+            <button onClick={() => setMoreModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "20px", cursor: "pointer" }}>✖</button>
+            <h3 style={{ margin: "0 0 16px", color: primaryNeon, fontSize: "18px", display: "flex", alignItems: "center", gap: "8px" }}>
+              📦 More Feature Hub
+            </h3>
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              
+              {/* 1. Lucky Spin (Vibrant Green Gradient) */}
+              <div 
+                onClick={() => { setMoreModalOpen(false); setSpinModalOpen(true); }}
+                style={{
+                  background: "linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.45) 100%)",
+                  border: "1px solid #10B981",
+                  borderRadius: "16px",
+                  padding: "14px 16px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  boxShadow: "0 4px 15px rgba(16, 185, 129, 0.2)"
+                }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <div style={{ width: "42px", height: "42px", borderRadius: "12px", background: "#10B981", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px" }}>🎡</div>
+                  <div>
+                    <div style={{ fontWeight: "bold", fontSize: "14px", color: "#FFF" }}>Lucky Spin Wheel</div>
+                    <div style={{ fontSize: "11px", color: "#A7F3D0" }}>প্রতিদিন জিতে নিন ফ্রি ক্যাশ বোনাস</div>
+                  </div>
+                </div>
+                <span style={{ background: "#10B981", color: "#000", fontWeight: "800", fontSize: "11px", padding: "4px 10px", borderRadius: "20px" }}>SPIN ›</span>
               </div>
-              <div onClick={() => { setMoreModalOpen(false); setLeaderboardModalOpen(true); }} style={{ background: cardBg, padding: "12px", borderRadius: "10px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span>🥇 Top Earner Leaderboard</span>
-                <span style={{ color: primaryNeon, fontSize: "11px" }}>View Rank ›</span>
+
+              {/* 2. Leaderboard (Golden Gradient) */}
+              <div 
+                onClick={() => { setMoreModalOpen(false); setLeaderboardModalOpen(true); }}
+                style={{
+                  background: "linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.45) 100%)",
+                  border: "1px solid #F59E0B",
+                  borderRadius: "16px",
+                  padding: "14px 16px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  boxShadow: "0 4px 15px rgba(245, 158, 11, 0.2)"
+                }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <div style={{ width: "42px", height: "42px", borderRadius: "12px", background: "#F59E0B", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px" }}>🥇</div>
+                  <div>
+                    <div style={{ fontWeight: "bold", fontSize: "14px", color: "#FFF" }}>Top Earners Leaderboard</div>
+                    <div style={{ fontSize: "11px", color: "#FDE68A" }}>শীর্ষ উপার্জনকারীদের র‍্যাংক তালিকা</div>
+                  </div>
+                </div>
+                <span style={{ background: "#F59E0B", color: "#000", fontWeight: "800", fontSize: "11px", padding: "4px 10px", borderRadius: "20px" }}>RANK ›</span>
               </div>
-              <div onClick={() => { setMoreModalOpen(false); setVipModalOpen(true); }} style={{ background: cardBg, padding: "12px", borderRadius: "10px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span>👑 VIP Membership Club</span>
-                <span style={{ color: "#F59E0B", fontSize: "11px" }}>Special Perk ›</span>
+
+              {/* 3. VIP Club (Purple Gradient) */}
+              <div 
+                onClick={() => { setMoreModalOpen(false); setVipModalOpen(true); }}
+                style={{
+                  background: "linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(126, 34, 206, 0.45) 100%)",
+                  border: "1px solid #A855F7",
+                  borderRadius: "16px",
+                  padding: "14px 16px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  boxShadow: "0 4px 15px rgba(168, 85, 247, 0.2)"
+                }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <div style={{ width: "42px", height: "42px", borderRadius: "12px", background: "#A855F7", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px" }}>👑</div>
+                  <div>
+                    <div style={{ fontWeight: "bold", fontSize: "14px", color: "#FFF" }}>VIP Membership Club</div>
+                    <div style={{ fontSize: "11px", color: "#E9D5FF" }}>ডাবল ইনকাম ও এক্সপ্রেস ক্যাশআউট</div>
+                  </div>
+                </div>
+                <span style={{ background: "#A855F7", color: "#FFF", fontWeight: "800", fontSize: "11px", padding: "4px 10px", borderRadius: "20px" }}>VIP ›</span>
               </div>
-              <div onClick={() => { setMoreModalOpen(false); setSecurityModalOpen(true); }} style={{ background: cardBg, padding: "12px", borderRadius: "10px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span>🛡️ Platform Safety & Security</span>
-                <span style={{ color: "#38BDF8", fontSize: "11px" }}>Guide ›</span>
+
+              {/* 4. Safety & Security (Cyan Gradient) */}
+              <div 
+                onClick={() => { setMoreModalOpen(false); setSecurityModalOpen(true); }}
+                style={{
+                  background: "linear-gradient(135deg, rgba(0, 209, 255, 0.2) 0%, rgba(0, 102, 255, 0.35) 100%)",
+                  border: "1px solid #00D1FF",
+                  borderRadius: "16px",
+                  padding: "14px 16px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  boxShadow: "0 4px 15px rgba(0, 209, 255, 0.2)"
+                }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <div style={{ width: "42px", height: "42px", borderRadius: "12px", background: "#00D1FF", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px", color: "#000" }}>🛡️</div>
+                  <div>
+                    <div style={{ fontWeight: "bold", fontSize: "14px", color: "#FFF" }}>Security & Guarantees</div>
+                    <div style={{ fontSize: "11px", color: "#BAE6FD" }}>১০০% নিরাপদ আর্নিং ও ডেটা সুরক্ষা</div>
+                  </div>
+                </div>
+                <span style={{ background: "#00D1FF", color: "#000", fontWeight: "800", fontSize: "11px", padding: "4px 10px", borderRadius: "20px" }}>SAFE ›</span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL: REFERRAL HUB (WITH DETAILED RULES & FRIEND LIST) ================= */}
+      {referralModalOpen && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 400, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+          <div style={{ background: "#0B1B3B", border: `1.5px solid ${borderNeon}`, borderRadius: "22px", width: "100%", maxWidth: "400px", padding: "20px", position: "relative", maxHeight: "90vh", overflowY: "auto" }}>
+            <button onClick={() => setReferralModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
+            <h3 style={{ margin: "0 0 6px", color: primaryNeon, textAlign: "center" }}>👥 রেফারেল ও উইথড্র সিস্টেম</h3>
+            
+            {/* Rules Callout */}
+            <div style={{ background: "rgba(245, 158, 11, 0.15)", border: "1px solid #F59E0B", borderRadius: "12px", padding: "12px", marginBottom: "14px", fontSize: "11px", color: "#FEF08A", lineHeight: "1.5" }}>
+              <b>📌 রেফারেল ও পেমেন্ট শর্তাবলী:</b><br/>
+              ১. প্রতি সফল রেফারে আপনি পাবেন <b>৳ ১০০ টাকা</b>।<br/>
+              ২. রেফারেল ব্যালেন্স বা কোনো প্রকার উইথড্র সম্পন্ন করতে আপনাকে অন্তত <b>১০ জনকে সফল রেফার</b> করতে হবে।<br/>
+              ৩. সর্বনিম্ন উইথড্র পরিমাণ <b>$10 ডলার (৳ ১,২০০ টাকা)</b>।<br/>
+              ৪. ১০০ জন সফল রেফারে পাবেন সরাসরি <b>$10 বোনাস</b>!
+            </div>
+
+            {/* Invite Link */}
+            <div style={{ background: "#070E1E", border: `1px dashed ${primaryNeon}`, borderRadius: "10px", padding: "8px 10px", display: "flex", gap: "8px", alignItems: "center", marginBottom: "14px" }}>
+              <input type="text" readOnly value={`https://t.me/FAAgencyEarnAppBot?start=${currentUser.referralCode}`} style={{ width: "100%", background: "transparent", border: "none", color: "#FFF", fontSize: "11px" }} />
+              <button onClick={copyReferralLink} style={{ background: primaryNeon, border: "none", borderRadius: "6px", padding: "6px 12px", color: "#000", fontWeight: "bold", cursor: "pointer" }}>Copy</button>
+            </div>
+
+            {/* Stats */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", textAlign: "center", marginBottom: "16px" }}>
+              <div style={{ background: cardBg, padding: "10px 4px", borderRadius: "10px" }}>
+                <div style={{ fontSize: "10px", color: "#94A3B8" }}>মোট রেফার্ড</div>
+                <div style={{ fontSize: "14px", fontWeight: "bold", color: primaryNeon }}>{referrals} জন</div>
+              </div>
+              <div style={{ background: cardBg, padding: "10px 4px", borderRadius: "10px" }}>
+                <div style={{ fontSize: "10px", color: "#94A3B8" }}>সক্রিয় ফ্রেন্ড</div>
+                <div style={{ fontSize: "14px", fontWeight: "bold", color: "#10B981" }}>{qualifiedReferrals} জন</div>
+              </div>
+              <div style={{ background: cardBg, padding: "10px 4px", borderRadius: "10px" }}>
+                <div style={{ fontSize: "10px", color: "#94A3B8" }}>উইথড্র শর্ত</div>
+                <div style={{ fontSize: "12px", fontWeight: "bold", color: qualifiedReferrals >= 10 ? "#10B981" : "#EF4444" }}>
+                  {qualifiedReferrals >= 10 ? "✅ আনলক" : `${qualifiedReferrals}/10 বাকি`}
+                </div>
               </div>
             </div>
+
+            {/* Referred Friends Detailed History */}
+            <div style={{ fontSize: "12px", fontWeight: "bold", color: "#38BDF8", marginBottom: "8px" }}>রেফার্ড ফ্রেন্ডস তালিকা ও উইথড্র হিস্ট্রি:</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {referralList.map(f => (
+                <div key={f.id} style={{ background: "#070E1E", border: "1px solid #1E293B", borderRadius: "10px", padding: "10px 12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <div style={{ fontWeight: "bold", fontSize: "12px", color: "#FFF" }}>{f.name}</div>
+                    <div style={{ fontSize: "10px", color: "#94A3B8" }}>যোগদান: {f.date} • স্ট্যাটাস: <span style={{ color: f.qualified ? "#10B981" : "#F59E0B" }}>{f.status}</span></div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: "11px", color: "#10B981", fontWeight: "bold" }}>উইথড্র: ${f.withdrawnUSD.toFixed(2)}</div>
+                    <div style={{ fontSize: "9px", color: "#94A3B8" }}>আয়: ${f.earnedUSD.toFixed(2)}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
           </div>
         </div>
       )}
@@ -1232,7 +954,7 @@ export default function App() {
             <h3 style={{ margin: "0 0 10px", color: "#F59E0B" }}>👑 VIP Membership Club</h3>
             <p style={{ fontSize: "12px", color: "#CBD5E1", lineHeight: "1.5" }}>
               ভিআইপি মেম্বাররা প্রতিটি টাস্কে পাবেন <b>দ্বিগুণ (2X) রিওয়ার্ড</b>, তাৎক্ষণিক ক্যাশআউট সুবিধা এবং ২৪/৭ ডেডিকেটেড অ্যাডমিন সাপোর্ট।<br/><br/>
-              খুব শীঘ্রই ভিআইপি ক্লাবের স্লট উন্মুক্ত করা হবে!
+              খুব শীঘ্রই ভিআইপি ক্লাবের নতুন স্লট উন্মুক্ত করা হবে!
             </p>
           </div>
         </div>
@@ -1245,33 +967,8 @@ export default function App() {
             <button onClick={() => setSecurityModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
             <h3 style={{ margin: "0 0 10px", color: primaryNeon }}>🛡️ নিরাপত্তা ও বিশ্বস্ততা</h3>
             <p style={{ fontSize: "12px", color: "#CBD5E1", lineHeight: "1.6" }}>
-              FA AGENCY আপনার উপার্জিত অর্থের শতভাগ নিশ্চয়তা প্রদান করে। আপনার ওয়ালেট ডাটা, NID এবং পেমেন্ট নম্বর এনক্রিপ্টেড আকারে আমাদের ডাটাবেজে সুরক্ষিত রাখা হয়। কোনো তৃতীয় পক্ষের সাথে আপনার তথ্য শেয়ার করা হয় না।
+              FA AGENCY আপনার উপার্জিত অর্থের শতভাগ নিশ্চয়তা প্রদান করে। আপনার ওয়ালেট ডাটা, NID এবং পেমেন্ট নম্বর এনক্রিপ্টেড আকারে ডাটাবেজে সুরক্ষিত থাকে। কোনো তৃতীয় পক্ষের সাথে আপনার তথ্য শেয়ার করা হয় না।
             </p>
-          </div>
-        </div>
-      )}
-
-      {/* Referral Modal */}
-      {referralModalOpen && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 350, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
-          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "20px", width: "100%", maxWidth: "390px", padding: "20px", position: "relative" }}>
-            <button onClick={() => setReferralModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
-            <h3 style={{ margin: 0, color: primaryNeon, textAlign: "center" }}>🎁 রেফারেল হাব</h3>
-            <p style={{ textAlign: "center", fontSize: "12px", color: "#94A3B8" }}>প্রতি সফল রেফারে ৳ ১০০ এবং ১০০ জনে $10 বোনাস!</p>
-            <div style={{ background: "#070E1E", border: `1px dashed ${primaryNeon}`, borderRadius: "12px", padding: "10px", margin: "14px 0", display: "flex", gap: "8px" }}>
-              <input type="text" readOnly value={`https://t.me/FAAgencyEarnAppBot?start=${currentUser.referralCode}`} style={{ width: "100%", background: "transparent", border: "none", color: "#FFF", fontSize: "11px" }} />
-              <button onClick={copyReferralLink} style={{ background: primaryNeon, border: "none", borderRadius: "6px", padding: "6px 12px", color: "#000", fontWeight: "bold" }}>Copy</button>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", textAlign: "center" }}>
-              <div style={{ background: cardBg, padding: "10px", borderRadius: "10px" }}>
-                <div style={{ fontSize: "11px", color: "#94A3B8" }}>মোট রেফার্ড</div>
-                <div style={{ fontSize: "16px", fontWeight: "bold", color: primaryNeon }}>{referrals} জন</div>
-              </div>
-              <div style={{ background: cardBg, padding: "10px", borderRadius: "10px" }}>
-                <div style={{ fontSize: "11px", color: "#94A3B8" }}>বোনাস প্রাপ্ত</div>
-                <div style={{ fontSize: "16px", fontWeight: "bold", color: "#10B981" }}>৳ {referrals * 100} BDT</div>
-              </div>
-            </div>
           </div>
         </div>
       )}
@@ -1339,14 +1036,16 @@ export default function App() {
           <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "18px", width: "100%", maxWidth: "390px", padding: "20px", position: "relative" }}>
             <button onClick={() => setWalletModal(null)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
             <h3 style={{ margin: "0 0 4px", color: primaryNeon }}>Cash Out</h3>
-            <p style={{ margin: "0 0 14px", fontSize: "12px", color: "#94A3B8" }}>মেথড ও স্লট নির্বাচন করুন (মিনিমাম $10):</p>
+            <p style={{ margin: "0 0 10px", fontSize: "11px", color: "#FCD34D" }}>
+              শর্ত: অন্তত ১০ জন সক্রিয় রেফার এবং মিনিমাম $10 ক্যাশআউট স্লট।
+            </p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "14px" }}>
               {[
                 { id: "bkash", name: "বিকাশ", logo: bkashLogo },
                 { id: "nagad", name: "নগদ", logo: nagadLogo },
                 { id: "rocket", name: "রকেট", logo: rocketLogo }
               ].map(m => (
-                <div key={m.id} onClick={() => handleSelectMethod(m.id)} style={{ border: `2px solid ${selectedMethod === m.id ? "#00D1FF" : "transparent"}`, borderRadius: "10px", padding: "8px", textAlign: "center", cursor: "pointer", background: "#070E1E" }}>
+                <div key={m.id} onClick={() => { setSelectedMethod(m.id); setTargetAccount(paymentMethods[m.id]); }} style={{ border: `2px solid ${selectedMethod === m.id ? "#00D1FF" : "transparent"}`, borderRadius: "10px", padding: "8px", textAlign: "center", cursor: "pointer", background: "#070E1E" }}>
                   <img src={m.logo} alt={m.name} style={{ width: "32px", height: "32px", objectFit: "contain" }} />
                   <div style={{ fontSize: "11px", fontWeight: "bold" }}>{m.name}</div>
                 </div>
@@ -1364,180 +1063,30 @@ export default function App() {
               <span style={{ color: "#10B981" }}>পাবেন:</span>
               <span style={{ color: "#10B981", fontWeight: "bold" }}>৳ {(withdrawAmount * usdToBdtRate).toLocaleString()} টাকা</span>
             </div>
-            <button onClick={handleProcessCashout} style={{ width: "100%", padding: "12px", background: "linear-gradient(90deg, #00D1FF, #0084FF)", border: "none", borderRadius: "10px", color: "#000", fontWeight: "800" }}>
+            <button onClick={handleProcessCashout} style={{ width: "100%", padding: "12px", background: "linear-gradient(90deg, #00D1FF, #0084FF)", border: "none", borderRadius: "10px", color: "#000", fontWeight: "800", cursor: "pointer" }}>
               Confirm Cash Out
             </button>
           </div>
         </div>
       )}
 
-      {/* Task Proof Modal */}
-      {socialProofModal && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 450, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
-          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "16px", width: "100%", maxWidth: "380px", padding: "20px", position: "relative" }}>
-            <button onClick={() => setSocialProofModal(null)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
-            <h3 style={{ margin: "0 0 8px", color: primaryNeon }}>📸 প্রুফ আপলোড</h3>
-            <p style={{ fontSize: "12px", color: "#94A3B8" }}>{socialProofModal.title}</p>
-            <div style={{ background: "#070E1E", padding: "8px", borderRadius: "6px", fontSize: "11px", color: "#FCD34D", marginBottom: "12px" }}>
-              💡 {socialProofModal.instructions}
-            </div>
-            <input type="file" accept="image/*" onChange={(e) => {
-              const reader = new FileReader();
-              reader.onloadend = () => setProofImage1(reader.result);
-              if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
-            }} style={{ marginBottom: "14px" }} />
-            <button onClick={handleSubmitSocialProof} style={{ width: "100%", padding: "12px", background: "linear-gradient(90deg, #00D1FF, #0084FF)", border: "none", borderRadius: "10px", color: "#000", fontWeight: "bold" }}>
-              সাবমিট করুন
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Video Proof Modal */}
-      {videoProofModal && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 450, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
-          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "16px", width: "100%", maxWidth: "390px", padding: "20px", position: "relative" }}>
-            <button onClick={() => setVideoProofModal(null)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
-            <h3 style={{ margin: "0 0 6px", color: primaryNeon }}>⏱️ ভিডিওর ২টি স্ক্রিনশট</h3>
-            <div style={{ marginBottom: "8px", fontSize: "11px" }}>১. ভিডিও শুরুর স্ক্রিনশট: 
-              <input type="file" accept="image/*" onChange={(e) => {
-                const reader = new FileReader();
-                reader.onloadend = () => setProofImage1(reader.result);
-                if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
-              }} />
-            </div>
-            <div style={{ marginBottom: "14px", fontSize: "11px" }}>২. ভিডিও শেষের স্ক্রিনশট: 
-              <input type="file" accept="image/*" onChange={(e) => {
-                const reader = new FileReader();
-                reader.onloadend = () => setProofImage2(reader.result);
-                if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
-              }} />
-            </div>
-            <button onClick={handleSubmitVideoProof} style={{ width: "100%", padding: "12px", background: "linear-gradient(90deg, #10B981, #059669)", border: "none", borderRadius: "10px", color: "#FFF", fontWeight: "bold" }}>
-              জমা দিন
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Video Hub Modal */}
-      {videoModalOpen && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 350, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
-          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "20px", width: "100%", maxWidth: "390px", padding: "20px", position: "relative" }}>
-            <button onClick={() => setVideoModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
-            <h3 style={{ margin: "0 0 10px", color: primaryNeon }}>🎬 Watch Video & Earn</h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              {videoTasks.map(v => (
-                <div key={v.id} style={{ background: "#070E1E", padding: "10px", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>
-                    <div style={{ fontSize: "12px", fontWeight: "bold" }}>{v.title}</div>
-                    <div style={{ fontSize: "10px", color: "#10B981" }}>+${v.rewardUSD}</div>
-                  </div>
-                  <button onClick={() => { window.open(v.link, "_blank"); setVideoProofModal(v); }} style={{ background: "#E11D48", color: "#FFF", border: "none", borderRadius: "14px", padding: "6px 12px", fontSize: "11px", fontWeight: "bold" }}>
-                    Watch ▶
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Game Modal */}
-      {gamesModalOpen && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.95)", zIndex: 400, display: "flex", flexDirection: "column", padding: "16px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-            <h3 style={{ margin: 0, color: primaryNeon }}>🎮 Live Game Hub</h3>
-            <button onClick={() => { setGamesModalOpen(false); setSelectedGameUrl(""); }} style={{ background: "transparent", border: "none", color: "#FFF", fontSize: "20px" }}>✖</button>
-          </div>
-          {!selectedGameUrl ? (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              {[
-                { name: "Flappy Dunk 🏀", url: "https://games.construct.net/1034/latest" },
-                { name: "Subway Runner 🏃", url: "https://games.construct.net/1083/latest" },
-                { name: "Tower Builder 🏗️", url: "https://games.construct.net/1004/latest" },
-                { name: "Knife Hit 🔪", url: "https://games.construct.net/1018/latest" }
-              ].map((g, i) => (
-                <div key={i} onClick={() => setSelectedGameUrl(g.url)} style={{ background: cardBg, padding: "16px", borderRadius: "12px", textAlign: "center", cursor: "pointer" }}>
-                  <div style={{ fontWeight: "bold", fontSize: "12px" }}>{g.name}</div>
-                  <div style={{ color: "#10B981", fontSize: "10px", marginTop: "6px" }}>Play & Win</div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-              <iframe src={selectedGameUrl} title="Game" style={{ width: "100%", flex: 1, border: "none", borderRadius: "10px" }} />
-              <button onClick={() => { setBalance(b => parseFloat((b + 0.05).toFixed(2))); setGamesModalOpen(false); setSelectedGameUrl(""); alert("গেম খেলার রিওয়ার্ড +$0.05 যোগ হয়েছে!"); }} style={{ marginTop: "10px", padding: "10px", background: "#10B981", color: "#FFF", border: "none", borderRadius: "8px", fontWeight: "bold" }}>
-                Claim +$0.05
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Edit Profile Modal */}
-      {profileModal === "editProfile" && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.85)", zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
-          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "16px", width: "100%", maxWidth: "390px", padding: "20px", position: "relative" }}>
-            <button onClick={() => setProfileModal(null)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
-            <h3 style={{ margin: "0 0 14px", color: primaryNeon }}>Edit Profile</h3>
-            <input type="text" placeholder="নাম" value={editName} onChange={(e) => setEditName(e.target.value)} style={{ width: "100%", padding: "10px", borderRadius: "8px", background: "#070E1E", border: "1px solid #334155", color: "#FFF", marginBottom: "10px", boxSizing: "border-box" }} />
-            <input type="text" placeholder="ইউজারনেম" value={editUsername} onChange={(e) => setEditUsername(e.target.value)} style={{ width: "100%", padding: "10px", borderRadius: "8px", background: "#070E1E", border: "1px solid #334155", color: "#FFF", marginBottom: "14px", boxSizing: "border-box" }} />
-            <button onClick={() => { setCurrentUser({ ...currentUser, name: editName || currentUser.name, username: editUsername || currentUser.username }); setProfileModal(null); }} style={{ width: "100%", padding: "12px", background: "linear-gradient(90deg, #00D1FF, #0084FF)", border: "none", borderRadius: "8px", color: "#000", fontWeight: "bold" }}>
-              Save
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Payment Settings Modal */}
-      {profileModal === "paymentSettings" && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.85)", zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
-          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "16px", width: "100%", maxWidth: "390px", padding: "20px", position: "relative" }}>
-            <button onClick={() => setProfileModal(null)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
-            <h3 style={{ margin: "0 0 14px", color: primaryNeon }}>Payment Settings</h3>
-            <input type="text" placeholder="বিকাশ নম্বর" value={editBkash} onChange={(e) => setEditBkash(e.target.value)} style={{ width: "100%", padding: "10px", borderRadius: "8px", background: "#070E1E", border: "1px solid #334155", color: "#FFF", marginBottom: "10px", boxSizing: "border-box" }} />
-            <input type="text" placeholder="নগদ নম্বর" value={editNagad} onChange={(e) => setEditNagad(e.target.value)} style={{ width: "100%", padding: "10px", borderRadius: "8px", background: "#070E1E", border: "1px solid #334155", color: "#FFF", marginBottom: "10px", boxSizing: "border-box" }} />
-            <input type="text" placeholder="রকেট নম্বর" value={editRocket} onChange={(e) => setEditRocket(e.target.value)} style={{ width: "100%", padding: "10px", borderRadius: "8px", background: "#070E1E", border: "1px solid #334155", color: "#FFF", marginBottom: "14px", boxSizing: "border-box" }} />
-            <button onClick={() => { setPaymentMethods({ bkash: editBkash, nagad: editNagad, rocket: editRocket }); setProfileModal(null); }} style={{ width: "100%", padding: "12px", background: "linear-gradient(90deg, #00D1FF, #0084FF)", border: "none", borderRadius: "8px", color: "#000", fontWeight: "bold" }}>
-              Save Accounts
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Support Modal */}
+      {/* Support Modal (Updated with Official Outlook Email) */}
       {profileModal === "support" && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.85)", zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
           <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "16px", width: "100%", maxWidth: "380px", padding: "20px", position: "relative" }}>
             <button onClick={() => setProfileModal(null)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
             <h3 style={{ margin: "0 0 12px", color: primaryNeon }}>Support & Help</h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               <a href="https://t.me/fa_agency_support_bot" target="_blank" rel="noreferrer" style={{ padding: "12px", background: "#0088CC", color: "#FFF", textAlign: "center", borderRadius: "8px", textDecoration: "none", fontWeight: "bold" }}>টেলিগ্রাম সাপোর্ট</a>
-              <a href="mailto:support@fa-agency.online" style={{ padding: "12px", background: "#1E293B", color: "#38BDF8", textAlign: "center", borderRadius: "8px", textDecoration: "none", fontWeight: "bold", border: "1px solid #38BDF8" }}>ইমেইল সাপোর্ট</a>
+              <a href="mailto:agency.official@outlook.com" style={{ padding: "12px", background: "#1E293B", color: "#38BDF8", textAlign: "center", borderRadius: "8px", textDecoration: "none", fontWeight: "bold", border: "1px solid #38BDF8" }}>
+                ইমেইল: agency.official@outlook.com
+              </a>
             </div>
           </div>
         </div>
       )}
 
-      {/* DETAILED TERMS & CONDITIONS */}
-      {profileModal === "terms" && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 350, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
-          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "20px", width: "100%", maxWidth: "390px", padding: "20px", position: "relative", maxHeight: "85vh", overflowY: "auto" }}>
-            <button onClick={() => setProfileModal(null)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
-            <h3 style={{ margin: "0 0 12px", color: primaryNeon }}>📜 প্ল্যাটফর্মের শর্তাবলী ও নিয়মাবলী</h3>
-            <div style={{ fontSize: "12px", color: "#CBD5E1", lineHeight: "1.6", display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div><b>১. কাজের সততা:</b> প্রতিটি সোশ্যাল মিডিয়া টাস্ক (টেলিগ্রাম, টিকটক, ফেসবুক, ইউটিউব) সঠিকভাবে সম্পন্ন করে স্পষ্ট স্ক্রিনশট দিতে হবে। ভুয়া বা এডিটেড ছবি দিলে অ্যাকাউন্ট সাসপেন্ড হবে।</div>
-              <div><b>২. ভিডিও আর্নিং পলিসি:</b> ভিডিও দেখার সময় ভিডিওর শুরুর ও শেষের সঠিক টাইমের ২টি স্ক্রিনশট দিতে হবে।</div>
-              <div><b>৩. পেমেন্ট ও সর্বনিম্ন উইথড্র:</b> সর্বনিম্ন উইথড্র $10 USD। উইথড্র দেওয়ার পর অ্যাকাউন্টে অন্তত $1.00 ব্যালেন্স থাকতে হবে। বিকাশ, নগদ বা রকেটে সর্বোচ্চ ২৪ থেকে ৪৮ ঘণ্টার মধ্যে পেমেন্ট ক্লিয়ার করা হয়।</div>
-              <div><b>৪. রেফারেল নিয়ম:</b> একজন সক্রিয় ইউজার যুক্ত হলে আপনি ১০০ টাকা বোনাস পাবেন। ১০০ জন রেফার সফল হলে অতিরিক্ত $10 স্পেশাল বোনাস যোগ হবে। কোনো অটো বট বা ফেক রেফার প্রমাণিত হলে বোনাস বাতিল করা হবে।</div>
-              <div><b>৫. KYC অনুমোদন:</b> বড় অংকের উইথড্র ও ব্লু-টিক পেতে আসল NID এবং স্পষ্ট সেলফি দিয়ে KYC সম্পন্ন করতে হবে।</div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Bottom Navigation */}
+      {/* Bottom Nav */}
       <nav style={{
         position: "fixed",
         bottom: 0, left: 0, right: 0,
@@ -1549,7 +1098,6 @@ export default function App() {
         display: "flex",
         justifyContent: "space-around",
         alignItems: "center",
-        backdropFilter: "blur(10px)",
         zIndex: 100
       }}>
         {[
@@ -1557,25 +1105,22 @@ export default function App() {
           { id: "task", label: "Task", icon: "📋" },
           { id: "wallet", label: "Wallet", icon: "💳" },
           { id: "profile", label: "Profile", icon: "👤" }
-        ].map(tab => {
-          const isActive = activeTab === tab.id;
-          return (
-            <div
-              key={tab.id}
-              onClick={() => { setActiveTab(tab.id); setIsAdminView(false); }}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "4px",
-                cursor: "pointer",
-                color: isActive && !isAdminView ? primaryNeon : "#64748B"
-              }}>
-              <span style={{ fontSize: "18px" }}>{tab.icon}</span>
-              <span style={{ fontSize: "11px", fontWeight: isActive && !isAdminView ? "700" : "500" }}>{tab.label}</span>
-            </div>
-          );
-        })}
+        ].map(tab => (
+          <div
+            key={tab.id}
+            onClick={() => { setActiveTab(tab.id); setIsAdminView(false); }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "4px",
+              cursor: "pointer",
+              color: activeTab === tab.id && !isAdminView ? primaryNeon : "#64748B"
+            }}>
+            <span style={{ fontSize: "18px" }}>{tab.icon}</span>
+            <span style={{ fontSize: "11px", fontWeight: activeTab === tab.id && !isAdminView ? "700" : "500" }}>{tab.label}</span>
+          </div>
+        ))}
       </nav>
 
     </div>
