@@ -1,22 +1,9 @@
 ﻿import { Telegraf, Markup } from "telegraf";
-import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
-dotenv.config({ path: path.resolve(__dirname, "../../.env") });
-dotenv.config();
-
-const BOT_TOKEN = process.env.BOT_TOKEN;
-
-if (!BOT_TOKEN) {
-  console.error("CRITICAL ERROR: BOT_TOKEN is missing in .env file!");
-  process.exit(1);
-}
+const BOT_TOKEN = "8999664421:AAEC4VdrCzjs-YcUlFB7fIWWOFA4gsN_KCY";
+const APP_LINK = "https://t.me/FAAgencyEarnAppBot/myapp";
 
 const bot = new Telegraf(BOT_TOKEN);
-const APP_LINK = "https://t.me/FAAgencyEarnAppBot/myapp";
 
 bot.start(async (ctx) => {
   try {
