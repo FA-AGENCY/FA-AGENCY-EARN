@@ -5,7 +5,7 @@ const bkashLogo = new URL("./assets/payment-methods/bkash.png", import.meta.url)
 const nagadLogo = new URL("./assets/payment-methods/nagad.png", import.meta.url).href;
 const rocketLogo = new URL("./assets/payment-methods/rocket.png", import.meta.url).href;
 
-// Task Platform Logos
+// Task Platform Circular Logos
 const taskLogos = {
   telegram: new URL("./assets/task-logos/telegram.png", import.meta.url).href,
   whatsapp: new URL("./assets/task-logos/whatsapp.png", import.meta.url).href,
@@ -20,6 +20,29 @@ const taskLogos = {
 const SUPER_ADMIN_ID = "980047040";
 const SUPER_ADMIN_USERNAME = "Md_Aman_ullah";
 
+// Premium Facebook / Meta Style Blue Tick Badge Component
+const VerifiedBadge = ({ size = 18 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    style={{ verticalAlign: "middle", display: "inline-block", flexShrink: 0 }}
+  >
+    <path
+      d="M10.29 2.308a2.5 2.5 0 0 1 3.42 0l.662.62c.414.388.95.61 1.507.625l.904.024a2.5 2.5 0 0 1 2.43 2.43l.024.904c.015.557.237 1.093.625 1.507l.62.662a2.5 2.5 0 0 1 0 3.42l-.62.662c-.388.414-.61.95-.625 1.507l-.024.904a2.5 2.5 0 0 1-2.43 2.43l-.904.024c-.557.015-1.093.237-1.507.625l-.662.62a2.5 2.5 0 0 1-3.42 0l-.662-.62c-.414-.388-.95-.61-1.507-.625l-.904-.024a2.5 2.5 0 0 1-2.43-2.43l-.024-.904c-.015-.557-.237-1.093-.625-1.507l-.62-.662a2.5 2.5 0 0 1 0-3.42l.62-.662c.388-.414.61-.95.625-1.507l.024-.904a2.5 2.5 0 0 1 2.43-2.43l.904-.024c.557-.015 1.093-.237 1.507-.625l.662-.62z"
+      fill="#0084FF"
+    />
+    <path
+      d="M9.5 12.5l2 2 4.5-5"
+      stroke="#FFFFFF"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 export default function App() {
   const [activeTab, setActiveTab] = useState("home");
   const [isAdminView, setIsAdminView] = useState(false);
@@ -30,7 +53,7 @@ export default function App() {
     return parseFloat(localStorage.getItem("fa_rate")) || 120;
   });
 
-  // Financial States (Fresh Production zero defaults)
+  // Financial States
   const [balance, setBalance] = useState(() => {
     return parseFloat(localStorage.getItem("fa_user_balance")) || 0.00;
   });
@@ -46,7 +69,7 @@ export default function App() {
 
   const [showBalance, setShowBalance] = useState(true);
 
-  // Sync to Storage
+  // Sync Financials
   useEffect(() => {
     localStorage.setItem("fa_user_balance", balance.toString());
     localStorage.setItem("fa_today_earn", todayEarn.toString());
@@ -55,7 +78,7 @@ export default function App() {
     localStorage.setItem("fa_rate", usdToBdtRate.toString());
   }, [balance, todayEarn, totalEarn, referrals, usdToBdtRate]);
 
-  // Current Telegram User Detection
+  // Real Telegram User Detection
   const [currentUser, setCurrentUser] = useState({
     id: "guest",
     name: "User",
@@ -83,33 +106,12 @@ export default function App() {
 
   const isSuperAdmin = String(currentUser.id) === SUPER_ADMIN_ID || currentUser.username === SUPER_ADMIN_USERNAME;
 
-  // STRICT AD CONTROL: 1st ad after 10s, next ads strictly after 60s interval
-  useEffect(() => {
-    try {
-      if (typeof window.show_11756404 === "function") {
-        window.show_11756404({
-          type: "inApp",
-          inAppSettings: {
-            frequency: 1,
-            capping: 0.016,
-            interval: 60,
-            timeout: 10,
-            everyPage: false
-          }
-        });
-      }
-    } catch (err) {
-      console.error("Monetag setup error:", err);
-    }
-  }, []);
-
-  // KYC Submissions Queue (Admin Sync)
+  // KYC Submissions Queue & Status
   const [kycQueue, setKycQueue] = useState(() => {
     const saved = localStorage.getItem("fa_kyc_queue");
     return saved ? JSON.parse(saved) : [];
   });
 
-  // User's Personal KYC Status
   const [userKycStatus, setUserKycStatus] = useState(() => {
     return localStorage.getItem("fa_my_kyc_status") || "Unverified";
   });
@@ -119,49 +121,87 @@ export default function App() {
   const [nidBack, setNidBack] = useState(null);
   const [userSelfie, setUserSelfie] = useState(null);
 
-  // Daily Tasks
+  // COMPLETE COMPREHENSIVE TASKS LIST
   const [dailyTasks, setDailyTasks] = useState([
     {
       id: 1,
       title: "Join Official Telegram Channel",
       platform: "telegram",
       rewardUSD: 0.10,
-      link: "https://t.me/FAAgencyEarnOfficialBot",
+      link: "https://t.me/FAAgencyEarnAppBot",
       durationSec: 30,
-      screenshotsRequired: 1,
-      instructions: "অফিসিয়াল টেলিগ্রাম চ্যানেলে যুক্ত হয়ে একটি স্পষ্ট স্ক্রিনশট দিন।",
+      instructions: "অফিসিয়াল টেলিগ্রাম চ্যানেলে জয়েন করে স্ক্রিনশট দিন।",
       status: "pending"
     },
     {
       id: 2,
+      title: "Join Official WhatsApp Group",
+      platform: "whatsapp",
+      rewardUSD: 0.10,
+      link: "https://chat.whatsapp.com/",
+      durationSec: 30,
+      instructions: "আমাদের অফিসিয়াল হোয়াটসঅ্যাপ গ্রুপে যুক্ত হয়ে স্ক্রিনশট দিন।",
+      status: "pending"
+    },
+    {
+      id: 3,
       title: "Follow Official Facebook Page",
       platform: "facebook",
       rewardUSD: 0.15,
       link: "https://facebook.com/",
       durationSec: 30,
-      screenshotsRequired: 1,
-      instructions: "পেজে ফলো ও লাইক দিয়ে স্ক্রিনশট তুলে জমা দিন।",
+      instructions: "ফেসবুক পেজে লাইক ও ফলো দিয়ে স্ক্রিনশট তুলে জমা দিন।",
       status: "pending"
     },
     {
-      id: 3,
+      id: 4,
       title: "Subscribe YouTube Channel & Bell",
       platform: "youtube",
       rewardUSD: 0.20,
       link: "https://youtube.com/",
       durationSec: 60,
-      screenshotsRequired: 1,
-      instructions: "ইউটিউব চ্যানেল সাবস্ক্রাইব করে বেল আইকন চালু করা অবস্থায় স্ক্রিনশট দিন।",
+      instructions: "ইউটিউব চ্যানেল সাবস্ক্রাইব করে বেল অন রেখে স্ক্রিনশট দিন।",
+      status: "pending"
+    },
+    {
+      id: 5,
+      title: "Follow Official TikTok Account",
+      platform: "tiktok",
+      rewardUSD: 0.15,
+      link: "https://tiktok.com/",
+      durationSec: 30,
+      instructions: "আমাদের অফিসিয়াল টিকটক আইডিতে ফলো করে স্ক্রিনশট দিন।",
+      status: "pending"
+    },
+    {
+      id: 6,
+      title: "Follow on Twitter (X)",
+      platform: "twitter",
+      rewardUSD: 0.10,
+      link: "https://twitter.com/",
+      durationSec: 30,
+      instructions: "টুইটার (X) একাউন্টে ফলো দিয়ে স্ক্রিনশট আপলোড করুন।",
+      status: "pending"
+    },
+    {
+      id: 7,
+      title: "Visit Agency Website (1 Min)",
+      platform: "website",
+      rewardUSD: 0.12,
+      link: "https://apps.fa-agency.online",
+      durationSec: 60,
+      instructions: "ওয়েবসাইটে ১ মিনিট ভিজিট করে যেকোনো পেজের স্ক্রিনশট দিন।",
       status: "pending"
     }
   ]);
 
-  // Video Tasks
+  // Video Earning Hub
   const [videoTasks, setVideoTasks] = useState([
     { id: 201, title: "Watch YouTube Official Video (5 Min)", platform: "youtube", rewardUSD: 0.30, link: "https://youtube.com/", duration: "5 Min", durationSec: 300, status: "pending" },
     { id: 202, title: "Watch TikTok Viral Video (1 Min)", platform: "tiktok", rewardUSD: 0.15, link: "https://tiktok.com/", duration: "1 Min", durationSec: 60, status: "pending" }
   ]);
 
+  // Task Form State
   const [editingTask, setEditingTask] = useState(null);
   const [taskForm, setTaskForm] = useState({
     title: "",
@@ -169,7 +209,6 @@ export default function App() {
     rewardUSD: 0.10,
     link: "",
     durationSec: 30,
-    screenshotsRequired: 1,
     instructions: ""
   });
 
@@ -191,6 +230,10 @@ export default function App() {
 
   // Modals
   const [moreModalOpen, setMoreModalOpen] = useState(false);
+  const [spinModalOpen, setSpinModalOpen] = useState(false);
+  const [leaderboardModalOpen, setLeaderboardModalOpen] = useState(false);
+  const [vipModalOpen, setVipModalOpen] = useState(false);
+  const [securityModalOpen, setSecurityModalOpen] = useState(false);
   const [gamesModalOpen, setGamesModalOpen] = useState(false);
   const [selectedGameUrl, setSelectedGameUrl] = useState("");
   const [videoModalOpen, setVideoModalOpen] = useState(false);
@@ -225,13 +268,13 @@ export default function App() {
   const milestoneTarget = 100;
   const milestonePercent = Math.min(100, Math.round((qualifiedReferrals / milestoneTarget) * 100));
 
-  // KYC Submission from User -> Syncs to Admin
+  // KYC User Submit -> Syncs to Admin
   const handleKycSubmit = () => {
     if (!nidNumber || !nidFront || !nidBack || !userSelfie) {
       return alert("অনুগ্রহ করে NID নম্বর, সামনের ছবি, পেছনের ছবি ও নিজের সেলফি আপলোড করুন!");
     }
 
-    const newKycEntry = {
+    const newEntry = {
       id: Date.now(),
       userId: currentUser.id,
       userName: currentUser.name,
@@ -244,44 +287,42 @@ export default function App() {
       status: "Pending"
     };
 
-    const updatedQueue = [newKycEntry, ...kycQueue];
-    setKycQueue(updatedQueue);
-    localStorage.setItem("fa_kyc_queue", JSON.stringify(updatedQueue));
+    const updated = [newEntry, ...kycQueue];
+    setKycQueue(updated);
+    localStorage.setItem("fa_kyc_queue", JSON.stringify(updated));
 
     setUserKycStatus("Pending");
     localStorage.setItem("fa_my_kyc_status", "Pending");
-
     setProfileModal(null);
-    alert("আপনার KYC ডকুমেন্ট সফলভাবে সাবমিট হয়েছে! অ্যাডমিন @Md_Aman_ullah এটি যাচাই করে ব্লু-টিক ব্যাজ অনুমোদন করবেন।");
+    alert("KYC সাবমিট হয়েছে! FA AGENCY™ সাপোর্ট টিম বিষয়টি পর্যবেক্ষণ করে ব্লু টিক প্রদান করবে।");
   };
 
-  // Admin KYC Approve
-  const handleApproveKyc = (kycEntry) => {
-    const updated = kycQueue.filter(k => k.id !== kycEntry.id);
+  // Admin KYC Actions
+  const handleApproveKyc = (kyc) => {
+    const updated = kycQueue.filter(k => k.id !== kyc.id);
     setKycQueue(updated);
     localStorage.setItem("fa_kyc_queue", JSON.stringify(updated));
 
-    if (String(kycEntry.userId) === String(currentUser.id)) {
+    if (String(kyc.userId) === String(currentUser.id)) {
       setUserKycStatus("Verified");
       localStorage.setItem("fa_my_kyc_status", "Verified");
     }
-    alert(`ব্যবহারকারী ${kycEntry.userName} (ID: ${kycEntry.userId})-এর KYC অনুমোদিত হয়েছে! ব্লু-টিক ব্যাজ সক্রিয়।`);
+    alert(`ব্যবহারকারী ${kyc.userName} (ID: ${kyc.userId})-এর KYC অনুমোদিত হয়েছে!`);
   };
 
-  // Admin KYC Reject
-  const handleRejectKyc = (kycEntry) => {
-    const updated = kycQueue.filter(k => k.id !== kycEntry.id);
+  const handleRejectKyc = (kyc) => {
+    const updated = kycQueue.filter(k => k.id !== kyc.id);
     setKycQueue(updated);
     localStorage.setItem("fa_kyc_queue", JSON.stringify(updated));
 
-    if (String(kycEntry.userId) === String(currentUser.id)) {
+    if (String(kyc.userId) === String(currentUser.id)) {
       setUserKycStatus("Rejected");
       localStorage.setItem("fa_my_kyc_status", "Rejected");
     }
-    alert(`ব্যবহারকারী ${kycEntry.userName}-এর KYC বাতিল করা হয়েছে।`);
+    alert(`ব্যবহারকারী ${kyc.userName}-এর KYC বাতিল করা হয়েছে।`);
   };
 
-  // Rewarded Video Ad
+  // USER-INTENTIONAL ADS ONLY
   const triggerMonetagAd = () => {
     if (typeof window.show_11756404 === "function") {
       window.show_11756404().then(() => addAdBonus("Monetag Video Ad")).catch(() => fallbackAd("Video"));
@@ -290,7 +331,6 @@ export default function App() {
     }
   };
 
-  // Rewarded Popup Ad
   const triggerMonetagPopupAd = () => {
     if (typeof window.show_11756404 === "function") {
       window.show_11756404("pop").then(() => addAdBonus("Monetag Popup Offer")).catch(() => fallbackAd("Popup"));
@@ -300,7 +340,7 @@ export default function App() {
   };
 
   const fallbackAd = (type) => {
-    const ok = window.confirm(`[Monetag ${type} Ad]\nবিজ্ঞাপন দেখা সম্পন্ন হয়েছে?\n\nমার্জিন কেটে ব্যালেন্সে $${calculatedUserAdReward} যোগ হবে।`);
+    const ok = window.confirm(`[Monetag ${type} Ad]\nবিজ্ঞাপন দেখা সম্পন্ন হয়েছে?\n\nব্যালেন্সে $${calculatedUserAdReward} যোগ হবে।`);
     if (ok) addAdBonus(`Monetag ${type} Ad`);
   };
 
@@ -315,13 +355,31 @@ export default function App() {
       positive: true,
       category: "earn"
     }, ...prev]);
-    alert(`বিজ্ঞাপন দেখার জন্য +$${calculatedUserAdReward} USD যোগ হয়েছে!`);
+    alert(`বিজ্ঞাপন দেখার জন্য +$${calculatedUserAdReward} USD জমা হয়েছে!`);
+  };
+
+  // Lucky Spin Action
+  const handleSpinWheel = () => {
+    const rewards = [0.02, 0.05, 0.10, 0.01, 0.03];
+    const won = rewards[Math.floor(Math.random() * rewards.length)];
+    setBalance(b => parseFloat((b + won).toFixed(3)));
+    setTodayEarn(e => parseFloat((e + won).toFixed(3)));
+    setTotalEarn(t => parseFloat((t + won).toFixed(3)));
+    setTransactions(prev => [{
+      type: "Lucky Spin Bonus",
+      date: "Just now",
+      amount: `+$${won.toFixed(2)}`,
+      positive: true,
+      category: "earn"
+    }, ...prev]);
+    alert(`অভিনন্দন! আপনি স্পিন করে $${won.toFixed(2)} USD জিতে নিয়েছেন!`);
+    setSpinModalOpen(false);
   };
 
   // Withdraw Actions
   const handleApproveWithdraw = (reqId) => {
     setWithdrawRequests(prev => prev.map(r => r.id === reqId ? { ...r, status: "Approved" } : r));
-    alert("উইথড্র আবেদনটি অ্যাপ্রুভ ও পেইড হিসেবে চিহ্নিত করা হয়েছে।");
+    alert("উইথড্র আবেদনটি অ্যাপ্রুভ ও পেইড হিসেবে চিহ্নিত হয়েছে।");
   };
 
   const handleRejectWithdraw = (req) => {
@@ -343,7 +401,7 @@ export default function App() {
       positive: true,
       category: "earn"
     }, ...prev]);
-    alert(`টাস্ক অনুমোদিত হয়েছে! $${sub.rewardUSD.toFixed(2)} জমা হয়েছে।`);
+    alert(`টাস্ক অনুমোদিত হয়েছে! $${sub.rewardUSD.toFixed(2)} ব্যালেন্সে জমা হয়েছে।`);
   };
 
   const handleRejectProof = (subId) => {
@@ -351,7 +409,7 @@ export default function App() {
     alert("টাস্ক প্রুফটি বাতিল করা হয়েছে।");
   };
 
-  // Save Task
+  // Task Save
   const handleSaveTask = (e) => {
     e.preventDefault();
     if (!taskForm.title || !taskForm.link) return alert("শিরোনাম ও লিংক প্রদান করুন!");
@@ -361,15 +419,15 @@ export default function App() {
       alert("টাস্ক আপডেট করা হয়েছে!");
     } else {
       setDailyTasks([{ id: Date.now(), ...taskForm, status: "pending" }, ...dailyTasks]);
-      alert("নতুন টাস্ক যুক্ত করা হয়েছে!");
+      alert("নতুন টাস্ক যুক্ত হয়েছে!");
     }
 
     setEditingTask(null);
-    setTaskForm({ title: "", platform: "telegram", rewardUSD: 0.10, link: "", durationSec: 30, screenshotsRequired: 1, instructions: "" });
+    setTaskForm({ title: "", platform: "telegram", rewardUSD: 0.10, link: "", durationSec: 30, instructions: "" });
   };
 
   const copyReferralLink = () => {
-    const link = `https://t.me/FAAgencyEarnOfficialBot?start=${currentUser.referralCode}`;
+    const link = `https://t.me/FAAgencyEarnAppBot?start=${currentUser.referralCode}`;
     navigator.clipboard.writeText(link);
     alert(`রেফারেল লিংক কপি হয়েছে!\n${link}`);
   };
@@ -428,7 +486,7 @@ export default function App() {
     }, ...proofSubmissions]);
     setSocialProofModal(null);
     setProofImage1(null);
-    alert("প্রমাণপত্র জমা হয়েছে! অ্যাডমিন যাচাই করে ব্যালেন্সে ডলার যুক্ত করবেন।");
+    alert("প্রমাণপত্র জমা হয়েছে! FA AGENCY™ সাপোর্ট টিম যাচাই করে ব্যালেন্সে ডলার যুক্ত করবে।");
   };
 
   const handleSubmitVideoProof = () => {
@@ -448,7 +506,7 @@ export default function App() {
     setVideoProofModal(null);
     setProofImage1(null);
     setProofImage2(null);
-    alert("ভিডিওর ২টি স্ক্রিনশট জমা হয়েছে! অ্যাডমিন যাচাই করে অ্যাপ্রুভ করবেন।");
+    alert("ভিডিওর ২টি স্ক্রিনশট জমা হয়েছে! FA AGENCY™ সাপোর্ট টিম যাচাই করে অ্যাপ্রুভ করবে।");
   };
 
   const filteredTransactions = transactions.filter(t => {
@@ -470,7 +528,7 @@ export default function App() {
       boxSizing: "border-box"
     }}>
 
-      {/* Top Header */}
+      {/* Header */}
       <header style={{
         display: "flex",
         alignItems: "center",
@@ -504,9 +562,9 @@ export default function App() {
             )}
           </div>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               <span style={{ fontWeight: "700", fontSize: "15px" }}>{currentUser.name}</span>
-              {userKycStatus === "Verified" && <span style={{ color: "#00D1FF", fontSize: "13px" }}>✓</span>}
+              {userKycStatus === "Verified" && <VerifiedBadge size={16} />}
             </div>
             <span style={{ fontSize: "11px", color: "#10B981" }}>● ID: {currentUser.id}</span>
           </div>
@@ -547,7 +605,7 @@ export default function App() {
         </div>
       </header>
 
-      {/* Main Content Area */}
+      {/* Main Container */}
       <main style={{ padding: "16px" }}>
 
         {/* ================= ADMIN VIEW ================= */}
@@ -563,7 +621,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Admin Sub Navigation */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "4px", marginBottom: "14px" }}>
               {[
                 { id: "kyc", label: `KYC (${kycQueue.length})` },
@@ -590,7 +647,6 @@ export default function App() {
               ))}
             </div>
 
-            {/* 1. KYC VERIFICATION QUEUE */}
             {adminTab === "kyc" && (
               <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 <h4 style={{ margin: "0 0 4px", color: "#38BDF8", fontSize: "14px" }}>🆔 পেন্ডিং KYC ভেরিফিকেশন ({kycQueue.length})</h4>
@@ -642,7 +698,6 @@ export default function App() {
               </div>
             )}
 
-            {/* 2. TASKS */}
             {adminTab === "tasks" && (
               <div>
                 <div style={{ background: cardBg, padding: "14px", borderRadius: "14px", marginBottom: "14px", border: `1px solid ${borderNeon}` }}>
@@ -663,9 +718,11 @@ export default function App() {
                         onChange={(e) => setTaskForm({ ...taskForm, platform: e.target.value })}
                         style={{ padding: "8px", background: "#070E1E", border: "1px solid #334155", borderRadius: "6px", color: "#FFF", fontSize: "12px" }}>
                         <option value="telegram">Telegram</option>
+                        <option value="whatsapp">WhatsApp</option>
                         <option value="youtube">YouTube</option>
                         <option value="facebook">Facebook</option>
                         <option value="tiktok">TikTok</option>
+                        <option value="twitter">Twitter (X)</option>
                         <option value="website">App/Web</option>
                       </select>
                       <input
@@ -713,7 +770,6 @@ export default function App() {
               </div>
             )}
 
-            {/* 3. PROOFS */}
             {adminTab === "proofs" && (
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 {proofSubmissions.length === 0 ? (
@@ -737,7 +793,6 @@ export default function App() {
               </div>
             )}
 
-            {/* 4. WITHDRAWS */}
             {adminTab === "withdraws" && (
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 {withdrawRequests.length === 0 ? (
@@ -762,7 +817,6 @@ export default function App() {
               </div>
             )}
 
-            {/* 5. SETTINGS */}
             {adminTab === "settings" && (
               <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 <div style={{ background: cardBg, padding: "14px", borderRadius: "14px", border: `1px solid ${borderNeon}` }}>
@@ -867,7 +921,7 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* 6 Quick Action Grid Buttons */}
+                {/* Quick Action Grid */}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px", marginBottom: "16px" }}>
                   {[
                     { title: "Daily Tasks", sub: "Complete & Earn", icon: "📋", action: () => setActiveTab("task") },
@@ -875,7 +929,7 @@ export default function App() {
                     { title: "Referral", sub: "৳100 Per Friend", icon: "👥", action: () => setReferralModalOpen(true) },
                     { title: "Games", sub: "Play & Win", icon: "🎮", action: () => setGamesModalOpen(true) },
                     { title: "Offer Wall", sub: "High Rewards", icon: "⭐", action: () => setActiveTab("task") },
-                    { title: "More", sub: "Hub & Rewards", icon: "📦", action: () => setMoreModalOpen(true) }
+                    { title: "More", sub: "Spin & VIP", icon: "📦", action: () => setMoreModalOpen(true) }
                   ].map((item, idx) => (
                     <div
                       key={idx}
@@ -895,7 +949,7 @@ export default function App() {
                   ))}
                 </div>
 
-                {/* Single Bottom Mega Referral Banner */}
+                {/* Referral Mega Banner */}
                 <div
                   onClick={() => setReferralModalOpen(true)}
                   style={{
@@ -953,7 +1007,6 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Rewarded Popup Card */}
                 <div
                   onClick={triggerMonetagPopupAd}
                   style={{
@@ -979,6 +1032,7 @@ export default function App() {
                   </span>
                 </div>
 
+                {/* Complete Tasks List */}
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                   {dailyTasks.map(task => (
                     <div key={task.id} style={{
@@ -1068,7 +1122,7 @@ export default function App() {
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", justifyContent: "center" }}>
                     <h3 style={{ margin: 0, fontSize: "17px" }}>{currentUser.name}</h3>
-                    {userKycStatus === "Verified" && <span style={{ color: "#00D1FF" }}>✓</span>}
+                    {userKycStatus === "Verified" && <VerifiedBadge size={18} />}
                   </div>
                   <span style={{ fontSize: "12px", color: "#94A3B8" }}>@{currentUser.username || "member"} • ID: {currentUser.id}</span>
                 </div>
@@ -1080,11 +1134,14 @@ export default function App() {
                   <div onClick={() => { setEditBkash(paymentMethods.bkash); setEditNagad(paymentMethods.nagad); setEditRocket(paymentMethods.rocket); setProfileModal("paymentSettings"); }} style={{ background: cardBg, border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", padding: "14px 16px", display: "flex", justifyContent: "space-between", cursor: "pointer" }}>
                     <span>💳 Payment Settings</span><span>›</span>
                   </div>
-                  <div onClick={() => setProfileModal("kyc")} style={{ background: cardBg, border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", padding: "14px 16px", display: "flex", justifyContent: "space-between", cursor: "pointer" }}>
+                  <div onClick={() => setProfileModal("kyc")} style={{ background: cardBg, border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", padding: "14px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
                     <span>🆔 KYC Verification</span>
-                    <span style={{ fontSize: "11px", color: userKycStatus === "Verified" ? "#00D1FF" : (userKycStatus === "Pending" ? "#F59E0B" : "#EF4444"), fontWeight: "bold" }}>
-                      {userKycStatus}
-                    </span>
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                      <span style={{ fontSize: "11px", color: userKycStatus === "Verified" ? "#00D1FF" : (userKycStatus === "Pending" ? "#F59E0B" : "#EF4444"), fontWeight: "bold" }}>
+                        {userKycStatus}
+                      </span>
+                      {userKycStatus === "Verified" && <VerifiedBadge size={14} />}
+                    </div>
                   </div>
                   <div onClick={() => setProfileModal("support")} style={{ background: cardBg, border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", padding: "14px 16px", display: "flex", justifyContent: "space-between", cursor: "pointer" }}>
                     <span>🎧 Support & Help</span><span>›</span>
@@ -1100,14 +1157,136 @@ export default function App() {
 
       </main>
 
+      {/* ================= MODAL: MORE HUB ================= */}
+      {moreModalOpen && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 350, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "20px", width: "100%", maxWidth: "380px", padding: "20px", position: "relative" }}>
+            <button onClick={() => setMoreModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px", cursor: "pointer" }}>✖</button>
+            <h3 style={{ margin: "0 0 16px", color: primaryNeon }}>📦 More Features</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <div onClick={() => { setMoreModalOpen(false); setSpinModalOpen(true); }} style={{ background: cardBg, padding: "12px", borderRadius: "10px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span>🎡 Lucky Spin Wheel</span>
+                <span style={{ color: "#10B981", fontSize: "11px" }}>Free Bonus ›</span>
+              </div>
+              <div onClick={() => { setMoreModalOpen(false); setLeaderboardModalOpen(true); }} style={{ background: cardBg, padding: "12px", borderRadius: "10px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span>🥇 Top Earner Leaderboard</span>
+                <span style={{ color: primaryNeon, fontSize: "11px" }}>View Rank ›</span>
+              </div>
+              <div onClick={() => { setMoreModalOpen(false); setVipModalOpen(true); }} style={{ background: cardBg, padding: "12px", borderRadius: "10px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span>👑 VIP Membership Club</span>
+                <span style={{ color: "#F59E0B", fontSize: "11px" }}>Special Perk ›</span>
+              </div>
+              <div onClick={() => { setMoreModalOpen(false); setSecurityModalOpen(true); }} style={{ background: cardBg, padding: "12px", borderRadius: "10px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span>🛡️ Platform Safety & Security</span>
+                <span style={{ color: "#38BDF8", fontSize: "11px" }}>Guide ›</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Lucky Spin Modal */}
+      {spinModalOpen && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 400, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "20px", width: "100%", maxWidth: "360px", padding: "24px", textAlign: "center", position: "relative" }}>
+            <button onClick={() => setSpinModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
+            <div style={{ fontSize: "50px", marginBottom: "10px" }}>🎡</div>
+            <h3 style={{ margin: "0 0 8px", color: primaryNeon }}>Lucky Spin Wheel</h3>
+            <p style={{ fontSize: "12px", color: "#94A3B8", marginBottom: "20px" }}>স্পিন বাটনে চাপ দিয়ে জিতে নিন $0.01 থেকে $0.10 ডলার পর্যন্ত ক্যাশ বোনাস!</p>
+            <button onClick={handleSpinWheel} style={{ width: "100%", padding: "12px", background: "linear-gradient(90deg, #10B981, #059669)", border: "none", borderRadius: "10px", color: "#FFF", fontWeight: "bold", fontSize: "14px", cursor: "pointer" }}>
+              স্পিন করুন 🎯
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Leaderboard Modal */}
+      {leaderboardModalOpen && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 400, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "20px", width: "100%", maxWidth: "380px", padding: "20px", position: "relative" }}>
+            <button onClick={() => setLeaderboardModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
+            <h3 style={{ margin: "0 0 14px", color: primaryNeon }}>🥇 শীর্ষ উপার্জনকারী (Leaderboard)</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {[
+                { rank: 1, name: "Tanvir Ahmed", earn: "$142.50", badge: "🥇" },
+                { rank: 2, name: "Sabbir Hossain", earn: "$118.20", badge: "🥈" },
+                { rank: 3, name: "Rifat Karim", earn: "$94.00", badge: "🥉" },
+                { rank: 4, name: "Mehedi Hasan", earn: "$75.30", badge: "⭐" },
+                { rank: 5, name: currentUser.name, earn: `$${totalEarn.toFixed(2)}`, badge: "👤 (You)" }
+              ].map(u => (
+                <div key={u.rank} style={{ background: cardBg, padding: "10px 12px", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: "12px" }}><b>{u.badge}</b> {u.name}</span>
+                  <span style={{ color: "#10B981", fontWeight: "bold", fontSize: "12px" }}>{u.earn}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* VIP Modal */}
+      {vipModalOpen && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 400, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "20px", width: "100%", maxWidth: "380px", padding: "20px", position: "relative" }}>
+            <button onClick={() => setVipModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
+            <h3 style={{ margin: "0 0 10px", color: "#F59E0B" }}>👑 VIP Membership Club</h3>
+            <p style={{ fontSize: "12px", color: "#CBD5E1", lineHeight: "1.5" }}>
+              ভিআইপি মেম্বাররা প্রতিটি টাস্কে পাবেন <b>দ্বিগুণ (2X) রিওয়ার্ড</b>, তাৎক্ষণিক ক্যাশআউট সুবিধা এবং ২৪/৭ ডেডিকেটেড অ্যাডমিন সাপোর্ট।<br/><br/>
+              খুব শীঘ্রই ভিআইপি ক্লাবের স্লট উন্মুক্ত করা হবে!
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Security Modal */}
+      {securityModalOpen && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 400, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "20px", width: "100%", maxWidth: "380px", padding: "20px", position: "relative" }}>
+            <button onClick={() => setSecurityModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
+            <h3 style={{ margin: "0 0 10px", color: primaryNeon }}>🛡️ নিরাপত্তা ও বিশ্বস্ততা</h3>
+            <p style={{ fontSize: "12px", color: "#CBD5E1", lineHeight: "1.6" }}>
+              FA AGENCY আপনার উপার্জিত অর্থের শতভাগ নিশ্চয়তা প্রদান করে। আপনার ওয়ালেট ডাটা, NID এবং পেমেন্ট নম্বর এনক্রিপ্টেড আকারে আমাদের ডাটাবেজে সুরক্ষিত রাখা হয়। কোনো তৃতীয় পক্ষের সাথে আপনার তথ্য শেয়ার করা হয় না।
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Referral Modal */}
+      {referralModalOpen && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 350, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "20px", width: "100%", maxWidth: "390px", padding: "20px", position: "relative" }}>
+            <button onClick={() => setReferralModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
+            <h3 style={{ margin: 0, color: primaryNeon, textAlign: "center" }}>🎁 রেফারেল হাব</h3>
+            <p style={{ textAlign: "center", fontSize: "12px", color: "#94A3B8" }}>প্রতি সফল রেফারে ৳ ১০০ এবং ১০০ জনে $10 বোনাস!</p>
+            <div style={{ background: "#070E1E", border: `1px dashed ${primaryNeon}`, borderRadius: "12px", padding: "10px", margin: "14px 0", display: "flex", gap: "8px" }}>
+              <input type="text" readOnly value={`https://t.me/FAAgencyEarnAppBot?start=${currentUser.referralCode}`} style={{ width: "100%", background: "transparent", border: "none", color: "#FFF", fontSize: "11px" }} />
+              <button onClick={copyReferralLink} style={{ background: primaryNeon, border: "none", borderRadius: "6px", padding: "6px 12px", color: "#000", fontWeight: "bold" }}>Copy</button>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", textAlign: "center" }}>
+              <div style={{ background: cardBg, padding: "10px", borderRadius: "10px" }}>
+                <div style={{ fontSize: "11px", color: "#94A3B8" }}>মোট রেফার্ড</div>
+                <div style={{ fontSize: "16px", fontWeight: "bold", color: primaryNeon }}>{referrals} জন</div>
+              </div>
+              <div style={{ background: cardBg, padding: "10px", borderRadius: "10px" }}>
+                <div style={{ fontSize: "11px", color: "#94A3B8" }}>বোনাস প্রাপ্ত</div>
+                <div style={{ fontSize: "16px", fontWeight: "bold", color: "#10B981" }}>৳ {referrals * 100} BDT</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* KYC Modal */}
       {profileModal === "kyc" && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 350, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
           <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "20px", width: "100%", maxWidth: "390px", padding: "20px", position: "relative", maxHeight: "90vh", overflowY: "auto" }}>
             <button onClick={() => setProfileModal(null)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
-            <h3 style={{ margin: "0 0 12px", color: primaryNeon }}>KYC Verification</h3>
-            <p style={{ fontSize: "11px", color: "#94A3B8", margin: "0 0 12px" }}>
-              সঠিক ডকুমেন্টস প্রদান করে অ্যাকাউন্ট ভেরিফাই করুন এবং ব্লু-টিক আনলক করুন:
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+              <h3 style={{ margin: 0, color: primaryNeon }}>KYC Verification</h3>
+              <VerifiedBadge size={20} />
+            </div>
+            <p style={{ fontSize: "11px", color: "#94A3B8", margin: "0 0 12px", lineHeight: "1.5" }}>
+              সঠিক ডকুমেন্টস প্রদান করে অ্যাকাউন্ট ভেরিফাই করুন। <b>FA AGENCY™</b> সাপোর্ট টিম বিষয়টি পর্যবেক্ষণ করে ব্লু টিক প্রদান করবে।
             </p>
 
             <input
@@ -1341,22 +1520,24 @@ export default function App() {
         </div>
       )}
 
-      {/* Terms Modal */}
+      {/* DETAILED TERMS & CONDITIONS */}
       {profileModal === "terms" && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.85)", zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
-          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "16px", width: "100%", maxWidth: "380px", padding: "20px", position: "relative" }}>
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 350, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "20px", width: "100%", maxWidth: "390px", padding: "20px", position: "relative", maxHeight: "85vh", overflowY: "auto" }}>
             <button onClick={() => setProfileModal(null)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
-            <h3 style={{ margin: "0 0 10px", color: primaryNeon }}>শর্তাবলী</h3>
-            <div style={{ fontSize: "12px", color: "#CBD5E1", lineHeight: "1.5" }}>
-              ১. প্রতিটি টাস্ক সততার সাথে সম্পন্ন করতে হবে।<br/>
-              ২. সর্বনিম্ন উইথড্র $10 ডলার।<br/>
-              ৩. ফেক রেফারেল বা ভুয়া ডকুমেন্টস দিলে অ্যাকাউন্ট স্থায়ীভাবে বাতিল হতে পারে।
+            <h3 style={{ margin: "0 0 12px", color: primaryNeon }}>📜 প্ল্যাটফর্মের শর্তাবলী ও নিয়মাবলী</h3>
+            <div style={{ fontSize: "12px", color: "#CBD5E1", lineHeight: "1.6", display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div><b>১. কাজের সততা:</b> প্রতিটি সোশ্যাল মিডিয়া টাস্ক (টেলিগ্রাম, টিকটক, ফেসবুক, ইউটিউব) সঠিকভাবে সম্পন্ন করে স্পষ্ট স্ক্রিনশট দিতে হবে। ভুয়া বা এডিটেড ছবি দিলে অ্যাকাউন্ট সাসপেন্ড হবে।</div>
+              <div><b>২. ভিডিও আর্নিং পলিসি:</b> ভিডিও দেখার সময় ভিডিওর শুরুর ও শেষের সঠিক টাইমের ২টি স্ক্রিনশট দিতে হবে।</div>
+              <div><b>৩. পেমেন্ট ও সর্বনিম্ন উইথড্র:</b> সর্বনিম্ন উইথড্র $10 USD। উইথড্র দেওয়ার পর অ্যাকাউন্টে অন্তত $1.00 ব্যালেন্স থাকতে হবে। বিকাশ, নগদ বা রকেটে সর্বোচ্চ ২৪ থেকে ৪৮ ঘণ্টার মধ্যে পেমেন্ট ক্লিয়ার করা হয়।</div>
+              <div><b>৪. রেফারেল নিয়ম:</b> একজন সক্রিয় ইউজার যুক্ত হলে আপনি ১০০ টাকা বোনাস পাবেন। ১০০ জন রেফার সফল হলে অতিরিক্ত $10 স্পেশাল বোনাস যোগ হবে। কোনো অটো বট বা ফেক রেফার প্রমাণিত হলে বোনাস বাতিল করা হবে।</div>
+              <div><b>৫. KYC অনুমোদন:</b> বড় অংকের উইথড্র ও ব্লু-টিক পেতে আসল NID এবং স্পষ্ট সেলফি দিয়ে KYC সম্পন্ন করতে হবে।</div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Navigation */}
+      {/* Bottom Navigation */}
       <nav style={{
         position: "fixed",
         bottom: 0, left: 0, right: 0,
