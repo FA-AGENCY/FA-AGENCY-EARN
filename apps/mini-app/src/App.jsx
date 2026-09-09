@@ -48,12 +48,10 @@ export default function App() {
   const [isAdminView, setIsAdminView] = useState(false);
   const [adminTab, setAdminTab] = useState("kyc");
 
-  // Dynamic Dollar to BDT Rate
   const [usdToBdtRate, setUsdToBdtRate] = useState(() => {
     return parseFloat(localStorage.getItem("fa_rate")) || 120;
   });
 
-  // Financial States
   const [balance, setBalance] = useState(() => {
     return parseFloat(localStorage.getItem("fa_user_balance")) || 0.00;
   });
@@ -65,7 +63,6 @@ export default function App() {
   });
   const [showBalance, setShowBalance] = useState(true);
 
-  // Real Telegram User Detection
   const [currentUser, setCurrentUser] = useState({
     id: "guest",
     name: "User",
@@ -93,29 +90,60 @@ export default function App() {
 
   const isSuperAdmin = String(currentUser.id) === SUPER_ADMIN_ID || currentUser.username === SUPER_ADMIN_USERNAME;
 
-  // Referral Friends System & Withdrawal Rules Tracking
+  // Complete Referral System with Strict Withdraw & Friend History
   const [referralList, setReferralList] = useState(() => {
-    const saved = localStorage.getItem("fa_referral_friends");
+    const saved = localStorage.getItem("fa_referral_friends_detailed");
     return saved ? JSON.parse(saved) : [
-      { id: 1, name: "Tanvir Hasan", date: "Yesterday", status: "Active", earnedUSD: 0.83, withdrawnUSD: 10.00, qualified: true },
-      { id: 2, name: "MD Rakib", date: "2 days ago", status: "Active", earnedUSD: 0.83, withdrawnUSD: 0.00, qualified: true },
-      { id: 3, name: "Shakil Khan", date: "3 days ago", status: "Pending Task", earnedUSD: 0.00, withdrawnUSD: 0.00, qualified: false }
+      {
+        id: 1,
+        friendName: "Tanvir Hasan",
+        friendId: "6829104",
+        joinedDate: "05 Sep, 2026",
+        currentEarnUSD: 14.50,
+        hasWithdrawn10USD: true,
+        withdrawnAmount: 10.00,
+        bonusPaid: true,
+        bonusBDT: 100
+      },
+      {
+        id: 2,
+        friendName: "MD Rakib",
+        friendId: "7102941",
+        joinedDate: "07 Sep, 2026",
+        currentEarnUSD: 10.20,
+        hasWithdrawn10USD: true,
+        withdrawnAmount: 10.00,
+        bonusPaid: true,
+        bonusBDT: 100
+      },
+      {
+        id: 3,
+        friendName: "Shakil Khan",
+        friendId: "8192340",
+        joinedDate: "08 Sep, 2026",
+        currentEarnUSD: 6.40,
+        hasWithdrawn10USD: false,
+        withdrawnAmount: 0.00,
+        bonusPaid: false,
+        bonusBDT: 0
+      }
     ];
   });
 
   const referrals = referralList.length;
-  const qualifiedReferrals = referralList.filter(f => f.qualified).length;
+  const qualifiedReferrals = referralList.filter(f => f.hasWithdrawn10USD).length;
+  const totalReferralBonusEarnedBDT = referralList.filter(f => f.bonusPaid).reduce((acc, curr) => acc + curr.bonusBDT, 0);
+  const pendingBonusBDT = referralList.filter(f => !f.bonusPaid).length * 100;
   const requiredReferralsForWithdraw = 10;
   const milestoneTarget = 100;
   const milestonePercent = Math.min(100, Math.round((qualifiedReferrals / milestoneTarget) * 100));
 
-  // Sync Financials & Referrals
   useEffect(() => {
     localStorage.setItem("fa_user_balance", balance.toString());
     localStorage.setItem("fa_today_earn", todayEarn.toString());
     localStorage.setItem("fa_total_earn", totalEarn.toString());
     localStorage.setItem("fa_rate", usdToBdtRate.toString());
-    localStorage.setItem("fa_referral_friends", JSON.stringify(referralList));
+    localStorage.setItem("fa_referral_friends_detailed", JSON.stringify(referralList));
   }, [balance, todayEarn, totalEarn, usdToBdtRate, referralList]);
 
   // KYC Submissions Queue & Status
@@ -150,7 +178,7 @@ export default function App() {
     { id: 202, title: "Watch TikTok Viral Video (1 Min)", rewardUSD: 0.15, link: "https://tiktok.com/", duration: "1 Min", status: "pending" }
   ]);
 
-  // Modals & States
+  // Modals & Popups
   const [moreModalOpen, setMoreModalOpen] = useState(false);
   const [spinModalOpen, setSpinModalOpen] = useState(false);
   const [leaderboardModalOpen, setLeaderboardModalOpen] = useState(false);
@@ -187,11 +215,9 @@ export default function App() {
   const cardBg = "rgba(15, 30, 65, 0.65)";
   const borderNeon = "rgba(0, 209, 255, 0.2)";
   const availableSlots = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-
-  // Ad Reward Unit Calculation
   const calculatedUserAdReward = 0.03;
 
-  // Zero Auto-Ads: Triggered strictly by user click
+  // Zero Auto Ads (Only deliberate user clicks)
   const triggerMonetagAd = () => {
     if (typeof window.show_11756404 === "function") {
       window.show_11756404().then(() => addAdBonus("Monetag Video Ad")).catch(() => fallbackAd("Video"));
@@ -299,14 +325,14 @@ export default function App() {
     alert(`ব্যবহারকারী ${kyc.userName}-এর KYC বাতিল করা হয়েছে।`);
   };
 
-  // Cashout with Referral & Minimum $10 Criteria
+  // Cashout with Strict $10 and 10 Referrals Criteria
   const handleProcessCashout = () => {
     if (!targetAccount) return alert("অ্যাকাউন্ট নম্বর দিন!");
     if (withdrawAmount < 10 || withdrawAmount % 10 !== 0) {
       return alert("উইথড্র সর্বনিম্ন $10 হতে হবে এবং $10-এর গুণিতক স্লটে (যেমন: $10, $20, $30...) তুলতে হবে!");
     }
     if (qualifiedReferrals < requiredReferralsForWithdraw) {
-      return alert(`উইথড্র করার শর্ত: আপনাকে অন্তত ${requiredReferralsForWithdraw} জন সক্রিয় ফ্রেন্ডকে রেফার করতে হবে!\nআপনার বর্তমান রেফার: ${qualifiedReferrals} জন।`);
+      return alert(`উইথড্র করার শর্ত: আপনাকে অন্তত ${requiredReferralsForWithdraw} জন এমন বন্ধুকে রেফার করতে হবে যারা প্রত্যেকে $10 উইথড্র সফল করেছে!\nবর্তমানে শর্ত পূরণকারী ফ্রেন্ড: ${qualifiedReferrals} জন।`);
     }
     if (balance - withdrawAmount < 1.0) {
       return alert("পর্যাপ্ত ব্যালেন্স নেই! ক্যাশআউটের পর অ্যাকাউন্টে অন্তত $1.00 অবশিষ্ট থাকতে হবে।");
@@ -335,7 +361,7 @@ export default function App() {
     }, ...prev]);
 
     setWalletModal(null);
-    alert(`উইথড্র সফলভাবে গ্রহণ করা হয়েছে!\nপরিমাণ: $${withdrawAmount} (৳ ${bdtEquivalent.toLocaleString()} টাকা)\nFA AGENCY™ ফাইন্যান্স টিম সর্বোচ্চ ২৪ ঘণ্টার মধ্যে পেমেন্ট পাঠিয়ে দেবে।`);
+    alert(`উইথড্র সফল হয়েছে!\nপরিমাণ: $${withdrawAmount} (৳ ${bdtEquivalent.toLocaleString()} টাকা)\nFA AGENCY™ টিম সর্বোচ্চ ২৪ ঘণ্টার মধ্যে পেমেন্ট পাঠিয়ে দেবে।`);
   };
 
   const copyReferralLink = () => {
@@ -420,7 +446,7 @@ export default function App() {
       {/* Main Content */}
       <main style={{ padding: "16px" }}>
 
-        {/* ADMIN VIEW */}
+        {/* ADMIN PANEL VIEW */}
         {isAdminView ? (
           <div>
             <div style={{ background: "#1E293B", padding: "14px", borderRadius: "12px", marginBottom: "14px", border: "1px solid #F59E0B" }}>
@@ -579,12 +605,12 @@ export default function App() {
                     </span>
                   </div>
                   <p style={{ margin: "0 0 8px", fontSize: "12px", color: "#FEF08A", lineHeight: "1.5" }}>
-                    • প্রতি রেফারে পাবেন <b>৳ ১০০ টাকা</b> বোনাস!<br/>
-                    • উইথড্র আনলক করতে অন্তত <b>১০ জনকে সফল রেফার</b> করতে হবে এবং সর্বনিম্ন ক্যাশআউট <b>$10 ডলার (৳১,২০০)</b>।<br/>
-                    • ১০০ জনকে রেফার সম্পন্ন করলে সরাসরি পাবেন অতিরিক্ত <b>$10 ডলার ক্যাশ বোনাস</b>!
+                    • রেফারকৃত ব্যক্তি <b>$10 ডলার উইথড্র সফল করলে</b> আপনি পাবেন <b>৳ ১০০ টাকা বোনাস</b>!<br/>
+                    • উইথড্র আনলক করতে অন্তত <b>১০ জনের $10 উইথড্র সফল</b> হতে হবে।<br/>
+                    • ১০০ জন সফল রেফারারে অতিরিক্ত <b>$10 ক্যাশ বোনাস</b>!
                   </p>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: "#CBD5E1", marginBottom: "4px" }}>
-                    <span>সক্রিয় রেফার অগ্রগতি:</span>
+                    <span>শর্ত পূরণকারী ফ্রেন্ডস:</span>
                     <span><b>{qualifiedReferrals}</b> / {milestoneTarget} জন ({milestonePercent}%)</span>
                   </div>
                   <div style={{ width: "100%", height: "8px", background: "rgba(0,0,0,0.5)", borderRadius: "10px", overflow: "hidden" }}>
@@ -739,13 +765,9 @@ export default function App() {
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 350, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
           <div style={{ background: "#0B1B3B", border: `1.5px solid ${primaryNeon}`, borderRadius: "24px", width: "100%", maxWidth: "390px", padding: "22px", position: "relative", boxShadow: "0 0 30px rgba(0,209,255,0.25)" }}>
             <button onClick={() => setMoreModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "20px", cursor: "pointer" }}>✖</button>
-            <h3 style={{ margin: "0 0 16px", color: primaryNeon, fontSize: "18px", display: "flex", alignItems: "center", gap: "8px" }}>
-              📦 More Feature Hub
-            </h3>
+            <h3 style={{ margin: "0 0 16px", color: primaryNeon, fontSize: "18px" }}>📦 More Feature Hub</h3>
             
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              
-              {/* 1. Lucky Spin (Vibrant Green Gradient) */}
               <div 
                 onClick={() => { setMoreModalOpen(false); setSpinModalOpen(true); }}
                 style={{
@@ -756,8 +778,7 @@ export default function App() {
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "space-between",
-                  boxShadow: "0 4px 15px rgba(16, 185, 129, 0.2)"
+                  justifyContent: "space-between"
                 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                   <div style={{ width: "42px", height: "42px", borderRadius: "12px", background: "#10B981", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px" }}>🎡</div>
@@ -769,7 +790,6 @@ export default function App() {
                 <span style={{ background: "#10B981", color: "#000", fontWeight: "800", fontSize: "11px", padding: "4px 10px", borderRadius: "20px" }}>SPIN ›</span>
               </div>
 
-              {/* 2. Leaderboard (Golden Gradient) */}
               <div 
                 onClick={() => { setMoreModalOpen(false); setLeaderboardModalOpen(true); }}
                 style={{
@@ -780,8 +800,7 @@ export default function App() {
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "space-between",
-                  boxShadow: "0 4px 15px rgba(245, 158, 11, 0.2)"
+                  justifyContent: "space-between"
                 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                   <div style={{ width: "42px", height: "42px", borderRadius: "12px", background: "#F59E0B", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px" }}>🥇</div>
@@ -793,7 +812,6 @@ export default function App() {
                 <span style={{ background: "#F59E0B", color: "#000", fontWeight: "800", fontSize: "11px", padding: "4px 10px", borderRadius: "20px" }}>RANK ›</span>
               </div>
 
-              {/* 3. VIP Club (Purple Gradient) */}
               <div 
                 onClick={() => { setMoreModalOpen(false); setVipModalOpen(true); }}
                 style={{
@@ -804,8 +822,7 @@ export default function App() {
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "space-between",
-                  boxShadow: "0 4px 15px rgba(168, 85, 247, 0.2)"
+                  justifyContent: "space-between"
                 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                   <div style={{ width: "42px", height: "42px", borderRadius: "12px", background: "#A855F7", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px" }}>👑</div>
@@ -817,7 +834,6 @@ export default function App() {
                 <span style={{ background: "#A855F7", color: "#FFF", fontWeight: "800", fontSize: "11px", padding: "4px 10px", borderRadius: "20px" }}>VIP ›</span>
               </div>
 
-              {/* 4. Safety & Security (Cyan Gradient) */}
               <div 
                 onClick={() => { setMoreModalOpen(false); setSecurityModalOpen(true); }}
                 style={{
@@ -828,8 +844,7 @@ export default function App() {
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "space-between",
-                  boxShadow: "0 4px 15px rgba(0, 209, 255, 0.2)"
+                  justifyContent: "space-between"
                 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                   <div style={{ width: "42px", height: "42px", borderRadius: "12px", background: "#00D1FF", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px", color: "#000" }}>🛡️</div>
@@ -840,64 +855,105 @@ export default function App() {
                 </div>
                 <span style={{ background: "#00D1FF", color: "#000", fontWeight: "800", fontSize: "11px", padding: "4px 10px", borderRadius: "20px" }}>SAFE ›</span>
               </div>
-
             </div>
           </div>
         </div>
       )}
 
-      {/* ================= MODAL: REFERRAL HUB (WITH DETAILED RULES & FRIEND LIST) ================= */}
+      {/* ================= MODAL: DETAILED REFERRAL HUB ================= */}
       {referralModalOpen && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 400, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
-          <div style={{ background: "#0B1B3B", border: `1.5px solid ${borderNeon}`, borderRadius: "22px", width: "100%", maxWidth: "400px", padding: "20px", position: "relative", maxHeight: "90vh", overflowY: "auto" }}>
-            <button onClick={() => setReferralModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
-            <h3 style={{ margin: "0 0 6px", color: primaryNeon, textAlign: "center" }}>👥 রেফারেল ও উইথড্র সিস্টেম</h3>
+          <div style={{ background: "#0B1B3B", border: `1.5px solid ${borderNeon}`, borderRadius: "22px", width: "100%", maxWidth: "410px", padding: "20px", position: "relative", maxHeight: "90vh", overflowY: "auto" }}>
+            <button onClick={() => setReferralModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px", cursor: "pointer" }}>✖</button>
             
-            {/* Rules Callout */}
-            <div style={{ background: "rgba(245, 158, 11, 0.15)", border: "1px solid #F59E0B", borderRadius: "12px", padding: "12px", marginBottom: "14px", fontSize: "11px", color: "#FEF08A", lineHeight: "1.5" }}>
-              <b>📌 রেফারেল ও পেমেন্ট শর্তাবলী:</b><br/>
-              ১. প্রতি সফল রেফারে আপনি পাবেন <b>৳ ১০০ টাকা</b>।<br/>
-              ২. রেফারেল ব্যালেন্স বা কোনো প্রকার উইথড্র সম্পন্ন করতে আপনাকে অন্তত <b>১০ জনকে সফল রেফার</b> করতে হবে।<br/>
-              ৩. সর্বনিম্ন উইথড্র পরিমাণ <b>$10 ডলার (৳ ১,২০০ টাকা)</b>।<br/>
-              ৪. ১০০ জন সফল রেফারে পাবেন সরাসরি <b>$10 বোনাস</b>!
+            <div style={{ textAlign: "center", marginBottom: "12px" }}>
+              <h3 style={{ margin: "0 0 4px", color: primaryNeon, fontSize: "18px" }}>👥 রেফারেল নেটওয়ার্ক ও ট্র্যাকিং</h3>
+              <span style={{ fontSize: "11px", color: "#94A3B8" }}>FA AGENCY™ রেফারেল শর্ত ও লাইভ হিস্ট্রি</span>
+            </div>
+
+            {/* Official Terms & Condition Callout */}
+            <div style={{ background: "rgba(245, 158, 11, 0.12)", border: "1.5px solid #F59E0B", borderRadius: "14px", padding: "12px 14px", marginBottom: "14px", fontSize: "11px", color: "#FEF08A", lineHeight: "1.6" }}>
+              <div style={{ fontWeight: "bold", fontSize: "12px", color: "#FCD34D", marginBottom: "4px" }}>📜 রেফারেল ও বোনাস নীতিমালা:</div>
+              • <b>১০০ টাকা বোনাস শর্ত:</b> যাকে রেফার করবেন, সে অ্যাকাউন্ট খুলে কাজ করে <b>$10 ডলার উইথড্র সফলভাবে সম্পন্ন করলে</b> তবেই আপনি প্রতি রেফারে ১০০ টাকা বোনাস পাবেন।<br/>
+              • <b>উইথড্র করার শর্ত:</b> আপনাকে অবশ্যই <b>সর্বনিম্ন ১০ জনকে রেফার করতে হবে</b> এবং সেই ১০ জনকেই নিজ অ্যাকাউন্ট থেকে $10 করে উইথড্র দিতে হবে। তবেই আপনার উইথড্র আনলক হবে।<br/>
+              • <b>মেগা রিওয়ার্ড:</b> ১০০ জন ইউজার $10 উইথড্র সফল করলে অতিরিক্ত <b>$10 ডলার ক্যাশ বোনাস</b> সরাসরি প্রদান করা হবে।
+            </div>
+
+            {/* Unlock Status Progress */}
+            <div style={{
+              background: qualifiedReferrals >= 10 ? "rgba(16, 185, 129, 0.2)" : "rgba(239, 68, 68, 0.15)",
+              border: `1px solid ${qualifiedReferrals >= 10 ? "#10B981" : "#EF4444"}`,
+              borderRadius: "12px",
+              padding: "10px 14px",
+              marginBottom: "14px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center"
+            }}>
+              <div>
+                <div style={{ fontSize: "12px", fontWeight: "bold", color: qualifiedReferrals >= 10 ? "#10B981" : "#FCA5A5" }}>
+                  {qualifiedReferrals >= 10 ? "✅ রেফারেল উইথড্র আনলক হয়েছে" : "🔒 রেফারেল উইথড্র লক রয়েছে"}
+                </div>
+                <div style={{ fontSize: "10px", color: "#CBD5E1" }}>
+                  {qualifiedReferrals >= 10 ? "১০ জনের $10 উইথড্র সম্পন্ন হয়েছে" : `আরও ${10 - qualifiedReferrals} জন বন্ধুর $10 উইথড্র প্রয়োজন`}
+                </div>
+              </div>
+              <span style={{ fontSize: "14px", fontWeight: "900", color: qualifiedReferrals >= 10 ? "#10B981" : "#EF4444" }}>
+                {qualifiedReferrals}/10 জন
+              </span>
             </div>
 
             {/* Invite Link */}
-            <div style={{ background: "#070E1E", border: `1px dashed ${primaryNeon}`, borderRadius: "10px", padding: "8px 10px", display: "flex", gap: "8px", alignItems: "center", marginBottom: "14px" }}>
-              <input type="text" readOnly value={`https://t.me/FAAgencyEarnAppBot?start=${currentUser.referralCode}`} style={{ width: "100%", background: "transparent", border: "none", color: "#FFF", fontSize: "11px" }} />
-              <button onClick={copyReferralLink} style={{ background: primaryNeon, border: "none", borderRadius: "6px", padding: "6px 12px", color: "#000", fontWeight: "bold", cursor: "pointer" }}>Copy</button>
+            <div style={{ background: "#070E1E", border: `1px dashed ${primaryNeon}`, borderRadius: "10px", padding: "8px 12px", display: "flex", gap: "8px", alignItems: "center", marginBottom: "14px" }}>
+              <input type="text" readOnly value={`https://t.me/FAAgencyEarnAppBot?start=${currentUser.referralCode}`} style={{ width: "100%", background: "transparent", border: "none", color: "#FFF", fontSize: "11px", outline: "none" }} />
+              <button onClick={copyReferralLink} style={{ background: primaryNeon, border: "none", borderRadius: "6px", padding: "6px 14px", color: "#000", fontWeight: "bold", cursor: "pointer", fontSize: "11px" }}>Copy</button>
             </div>
 
-            {/* Stats */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", textAlign: "center", marginBottom: "16px" }}>
-              <div style={{ background: cardBg, padding: "10px 4px", borderRadius: "10px" }}>
-                <div style={{ fontSize: "10px", color: "#94A3B8" }}>মোট রেফার্ড</div>
-                <div style={{ fontSize: "14px", fontWeight: "bold", color: primaryNeon }}>{referrals} জন</div>
+            {/* Summary Metrics */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", textAlign: "center", marginBottom: "16px" }}>
+              <div style={{ background: cardBg, padding: "10px", borderRadius: "10px", border: `1px solid ${borderNeon}` }}>
+                <div style={{ fontSize: "10px", color: "#94A3B8" }}>প্রাপ্ত বোনাস (পেইড)</div>
+                <div style={{ fontSize: "15px", fontWeight: "bold", color: "#10B981" }}>৳ {totalReferralBonusEarnedBDT} BDT</div>
+                <div style={{ fontSize: "9px", color: "#64748B" }}>{qualifiedReferrals} জন সফল উইথড্র</div>
               </div>
-              <div style={{ background: cardBg, padding: "10px 4px", borderRadius: "10px" }}>
-                <div style={{ fontSize: "10px", color: "#94A3B8" }}>সক্রিয় ফ্রেন্ড</div>
-                <div style={{ fontSize: "14px", fontWeight: "bold", color: "#10B981" }}>{qualifiedReferrals} জন</div>
-              </div>
-              <div style={{ background: cardBg, padding: "10px 4px", borderRadius: "10px" }}>
-                <div style={{ fontSize: "10px", color: "#94A3B8" }}>উইথড্র শর্ত</div>
-                <div style={{ fontSize: "12px", fontWeight: "bold", color: qualifiedReferrals >= 10 ? "#10B981" : "#EF4444" }}>
-                  {qualifiedReferrals >= 10 ? "✅ আনলক" : `${qualifiedReferrals}/10 বাকি`}
-                </div>
+              <div style={{ background: cardBg, padding: "10px", borderRadius: "10px", border: `1px solid ${borderNeon}` }}>
+                <div style={{ fontSize: "10px", color: "#94A3B8" }}>পেন্ডিং বোনাস</div>
+                <div style={{ fontSize: "15px", fontWeight: "bold", color: "#F59E0B" }}>৳ {pendingBonusBDT} BDT</div>
+                <div style={{ fontSize: "9px", color: "#64748B" }}>$10 উইথড্রর অপেক্ষায়</div>
               </div>
             </div>
 
-            {/* Referred Friends Detailed History */}
-            <div style={{ fontSize: "12px", fontWeight: "bold", color: "#38BDF8", marginBottom: "8px" }}>রেফার্ড ফ্রেন্ডস তালিকা ও উইথড্র হিস্ট্রি:</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            {/* A to Z Friend Referral History */}
+            <div style={{ fontSize: "12px", fontWeight: "bold", color: "#38BDF8", marginBottom: "8px" }}>
+              📋 রেফারেল হিস্ট্রি (কে কত আয় করল ও উইথড্র দিল):
+            </div>
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {referralList.map(f => (
-                <div key={f.id} style={{ background: "#070E1E", border: "1px solid #1E293B", borderRadius: "10px", padding: "10px 12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>
-                    <div style={{ fontWeight: "bold", fontSize: "12px", color: "#FFF" }}>{f.name}</div>
-                    <div style={{ fontSize: "10px", color: "#94A3B8" }}>যোগদান: {f.date} • স্ট্যাটাস: <span style={{ color: f.qualified ? "#10B981" : "#F59E0B" }}>{f.status}</span></div>
+                <div key={f.id} style={{ background: "#070E1E", border: "1px solid #1E293B", borderRadius: "12px", padding: "12px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                    <div>
+                      <span style={{ fontWeight: "bold", fontSize: "13px", color: "#FFF" }}>{f.friendName}</span>
+                      <span style={{ fontSize: "10px", color: "#94A3B8", marginLeft: "6px" }}>ID: {f.friendId}</span>
+                    </div>
+                    <span style={{
+                      fontSize: "10px",
+                      fontWeight: "bold",
+                      padding: "2px 8px",
+                      borderRadius: "6px",
+                      background: f.hasWithdrawn10USD ? "rgba(16, 185, 129, 0.2)" : "rgba(245, 158, 11, 0.2)",
+                      color: f.hasWithdrawn10USD ? "#10B981" : "#F59E0B",
+                      border: `1px solid ${f.hasWithdrawn10USD ? "#10B981" : "#F59E0B"}`
+                    }}>
+                      {f.hasWithdrawn10USD ? "উইথড্র সম্পন্ন ($10)" : "উইথড্র পেন্ডিং"}
+                    </span>
                   </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: "11px", color: "#10B981", fontWeight: "bold" }}>উইথড্র: ${f.withdrawnUSD.toFixed(2)}</div>
-                    <div style={{ fontSize: "9px", color: "#94A3B8" }}>আয়: ${f.earnedUSD.toFixed(2)}</div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px", fontSize: "11px", color: "#CBD5E1", background: "rgba(255,255,255,0.02)", padding: "8px", borderRadius: "8px" }}>
+                    <div>তার বর্তমান আয়: <b>${f.currentEarnUSD.toFixed(2)}</b></div>
+                    <div>মোট উইথড্র: <b>${f.withdrawnAmount.toFixed(2)}</b></div>
+                    <div>যুক্ত হওয়ার তারিখ: <b>{f.joinedDate}</b></div>
+                    <div>আপনার বোনাস: <b style={{ color: f.bonusPaid ? "#10B981" : "#F59E0B" }}>{f.bonusPaid ? "+৳১০০ (জমা)" : "৳০ (পেন্ডিং)"}</b></div>
                   </div>
                 </div>
               ))}
@@ -967,7 +1023,7 @@ export default function App() {
             <button onClick={() => setSecurityModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
             <h3 style={{ margin: "0 0 10px", color: primaryNeon }}>🛡️ নিরাপত্তা ও বিশ্বস্ততা</h3>
             <p style={{ fontSize: "12px", color: "#CBD5E1", lineHeight: "1.6" }}>
-              FA AGENCY আপনার উপার্জিত অর্থের শতভাগ নিশ্চয়তা প্রদান করে। আপনার ওয়ালেট ডাটা, NID এবং পেমেন্ট নম্বর এনক্রিপ্টেড আকারে ডাটাবেজে সুরক্ষিত থাকে। কোনো তৃতীয় পক্ষের সাথে আপনার তথ্য শেয়ার করা হয় না।
+              FA AGENCY আপনার উপার্জিত অর্থের শতভাগ নিশ্চয়তা প্রদান করে। আপনার ওয়ালেট ডাটা, NID এবং পেমেন্ট নম্বর এনক্রিপ্টেড আকারে ডাটাবেজে সুরক্ষিত থাকে।
             </p>
           </div>
         </div>
@@ -1037,7 +1093,7 @@ export default function App() {
             <button onClick={() => setWalletModal(null)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
             <h3 style={{ margin: "0 0 4px", color: primaryNeon }}>Cash Out</h3>
             <p style={{ margin: "0 0 10px", fontSize: "11px", color: "#FCD34D" }}>
-              শর্ত: অন্তত ১০ জন সক্রিয় রেফার এবং মিনিমাম $10 ক্যাশআউট স্লট।
+              শর্ত: ১০ জন রেফারারের $10 উইথড্র সফল হওয়া আবশ্যক এবং মিনিমাম $10 স্লট।
             </p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "14px" }}>
               {[
@@ -1070,7 +1126,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Support Modal (Updated with Official Outlook Email) */}
+      {/* Support Modal */}
       {profileModal === "support" && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.85)", zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
           <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "16px", width: "100%", maxWidth: "380px", padding: "20px", position: "relative" }}>
@@ -1086,7 +1142,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Bottom Nav */}
+      {/* Bottom Navigation */}
       <nav style={{
         position: "fixed",
         bottom: 0, left: 0, right: 0,
