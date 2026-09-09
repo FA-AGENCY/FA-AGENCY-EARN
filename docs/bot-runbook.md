@@ -7,7 +7,8 @@ The bot uses Telegraf long polling. It does not use webhooks and does not connec
 Required runtime variables:
 
 - `TELEGRAM_BOT_TOKEN`
-- `TELEGRAM_MINI_APP_URL` or compatible `APP_URL`, using HTTPS
+- `TELEGRAM_MINI_APP_URL` or compatible `APP_URL` / `MINI_APP_URL`, using HTTPS
+- Production Mini App domain used by this project: `https://app.fa-agency.online`
 - Optional `SUPPORT_URL`
 
 Start locally:

@@ -85,6 +85,12 @@ export default function App() {
           referralCode: "FA" + tgUser.id.toString().slice(-4)
         });
       }
+      const startParam = window.Telegram.WebApp.initDataUnsafe?.start_param
+        || new URLSearchParams(window.location.search).get("startapp")
+        || new URLSearchParams(window.location.search).get("ref");
+      if (startParam) {
+        localStorage.setItem("fa_start_param", startParam);
+      }
     }
   }, []);
 
@@ -218,17 +224,25 @@ export default function App() {
   const calculatedUserAdReward = 0.03;
 
   // Zero Auto Ads (Only deliberate user clicks)
+  const getMonetagHandler = () => {
+    if (typeof window.show_11756404 === "function") return window.show_11756404;
+    if (typeof window.show_rewarded === "function") return window.show_rewarded;
+    return null;
+  };
+
   const triggerMonetagAd = () => {
-    if (typeof window.show_11756404 === "function") {
-      window.show_11756404().then(() => addAdBonus("Monetag Video Ad")).catch(() => fallbackAd("Video"));
+    const handler = getMonetagHandler();
+    if (handler) {
+      handler().then(() => addAdBonus("Monetag Video Ad")).catch(() => fallbackAd("Video"));
     } else {
       fallbackAd("Video");
     }
   };
 
   const triggerMonetagPopupAd = () => {
-    if (typeof window.show_11756404 === "function") {
-      window.show_11756404("pop").then(() => addAdBonus("Monetag Popup Offer")).catch(() => fallbackAd("Popup"));
+    const handler = getMonetagHandler();
+    if (handler) {
+      handler("pop").then(() => addAdBonus("Monetag Popup Offer")).catch(() => fallbackAd("Popup"));
     } else {
       fallbackAd("Popup");
     }
@@ -1122,6 +1136,66 @@ export default function App() {
             <button onClick={handleProcessCashout} style={{ width: "100%", padding: "12px", background: "linear-gradient(90deg, #00D1FF, #0084FF)", border: "none", borderRadius: "10px", color: "#000", fontWeight: "800", cursor: "pointer" }}>
               Confirm Cash Out
             </button>
+          </div>
+        </div>
+      )}
+
+      {gamesModalOpen && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 400, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "20px", width: "100%", maxWidth: "380px", padding: "20px", position: "relative" }}>
+            <button onClick={() => setGamesModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
+            <h3 style={{ margin: "0 0 10px", color: primaryNeon }}>🎮 Games Hub</h3>
+            <p style={{ fontSize: "12px", color: "#94A3B8" }}>খেলার মাধ্যমে আয়ের অফার খুব শীঘ্রই যুক্ত হবে। এখন Daily Tasks ও Watch Ads ব্যবহার করুন।</p>
+            <button onClick={() => { setGamesModalOpen(false); setActiveTab("task"); }} style={{ width: "100%", padding: "12px", background: "linear-gradient(90deg, #00D1FF, #0084FF)", border: "none", borderRadius: "10px", color: "#000", fontWeight: "bold" }}>টাস্কে যান</button>
+          </div>
+        </div>
+      )}
+
+      {videoModalOpen && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 400, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "20px", width: "100%", maxWidth: "380px", padding: "20px", position: "relative" }}>
+            <button onClick={() => setVideoModalOpen(false)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
+            <h3 style={{ margin: "0 0 10px", color: primaryNeon }}>🎬 Watch Video & Earn</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {videoTasks.map((task) => (
+                <div key={task.id} style={{ background: cardBg, padding: "12px", borderRadius: "10px" }}>
+                  <div style={{ fontWeight: "700", fontSize: "13px" }}>{task.title}</div>
+                  <div style={{ color: primaryNeon, fontSize: "12px", margin: "4px 0 8px" }}>+${task.rewardUSD.toFixed(2)} • {task.duration}</div>
+                  <button onClick={() => { window.open(task.link, "_blank"); setVideoProofModal(task); }} style={{ width: "100%", padding: "8px", border: "none", borderRadius: "8px", background: "#00D1FF", color: "#000", fontWeight: "700" }}>ভিডিও দেখুন</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {profileModal === "editProfile" && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 400, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "20px", width: "100%", maxWidth: "380px", padding: "20px", position: "relative" }}>
+            <button onClick={() => setProfileModal(null)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
+            <h3 style={{ margin: "0 0 12px", color: primaryNeon }}>Edit Profile</h3>
+            <input value={editName} onChange={(e) => setEditName(e.target.value)} placeholder="নাম" style={{ width: "100%", marginBottom: "8px", padding: "10px", borderRadius: "8px", background: "#070E1E", border: "1px solid #334155", color: "#FFF", boxSizing: "border-box" }} />
+            <input value={editUsername} onChange={(e) => setEditUsername(e.target.value)} placeholder="ইউজারনেম" style={{ width: "100%", marginBottom: "12px", padding: "10px", borderRadius: "8px", background: "#070E1E", border: "1px solid #334155", color: "#FFF", boxSizing: "border-box" }} />
+            <button onClick={() => {
+              setCurrentUser((prev) => ({ ...prev, name: editName || prev.name, username: editUsername || prev.username }));
+              setProfileModal(null);
+            }} style={{ width: "100%", padding: "12px", background: "linear-gradient(90deg, #00D1FF, #0084FF)", border: "none", borderRadius: "10px", color: "#000", fontWeight: "bold" }}>সেভ করুন</button>
+          </div>
+        </div>
+      )}
+
+      {profileModal === "paymentSettings" && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.92)", zIndex: 400, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+          <div style={{ background: "#0B1B3B", border: `1px solid ${borderNeon}`, borderRadius: "20px", width: "100%", maxWidth: "380px", padding: "20px", position: "relative" }}>
+            <button onClick={() => setProfileModal(null)} style={{ position: "absolute", top: "14px", right: "14px", background: "transparent", border: "none", color: "#94A3B8", fontSize: "18px" }}>✖</button>
+            <h3 style={{ margin: "0 0 12px", color: primaryNeon }}>Payment Settings</h3>
+            <input value={editBkash} onChange={(e) => setEditBkash(e.target.value)} placeholder="বিকাশ নম্বর" style={{ width: "100%", marginBottom: "8px", padding: "10px", borderRadius: "8px", background: "#070E1E", border: "1px solid #334155", color: "#FFF", boxSizing: "border-box" }} />
+            <input value={editNagad} onChange={(e) => setEditNagad(e.target.value)} placeholder="নগদ নম্বর" style={{ width: "100%", marginBottom: "8px", padding: "10px", borderRadius: "8px", background: "#070E1E", border: "1px solid #334155", color: "#FFF", boxSizing: "border-box" }} />
+            <input value={editRocket} onChange={(e) => setEditRocket(e.target.value)} placeholder="রকেট নম্বর" style={{ width: "100%", marginBottom: "12px", padding: "10px", borderRadius: "8px", background: "#070E1E", border: "1px solid #334155", color: "#FFF", boxSizing: "border-box" }} />
+            <button onClick={() => {
+              setPaymentMethods({ bkash: editBkash, nagad: editNagad, rocket: editRocket });
+              setProfileModal(null);
+            }} style={{ width: "100%", padding: "12px", background: "linear-gradient(90deg, #00D1FF, #0084FF)", border: "none", borderRadius: "10px", color: "#000", fontWeight: "bold" }}>সেভ করুন</button>
           </div>
         </div>
       )}

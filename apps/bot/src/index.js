@@ -1,61 +1,46 @@
-﻿import { Telegraf } from 'telegraf';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
-import express from 'express';
+import { assertBotConfig, configureTelegramChrome, createBot, getBotConfig } from './bot.js';
 
-dotenv.config();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
-const botToken = process.env.TELEGRAM_BOT_TOKEN || process.env.BOT_TOKEN;
-if (!botToken) {
-  console.error('Error: TELEGRAM_BOT_TOKEN is missing in environment variables.');
-  process.exit(1);
-}
+const config = getBotConfig(process.env);
+assertBotConfig(config);
 
-const bot = new Telegraf(botToken);
-const webAppUrl = process.env.MINI_APP_URL || 'https://fa-agency-earn.web.app';
-const port = process.env.BOT_PORT || 5001;
-const webhookDomain = process.env.BOT_WEBHOOK_DOMAIN; // e.g., https://yourdomain.com
-const secretPath = `/telegraf/${bot.secretPathComponent()}`;
+const bot = createBot(config);
 
-// Basic bot commands
-bot.start((ctx) => {
-  ctx.reply('FA AGENCY EARN-এ স্বাগতম! নিচের বাটনে ক্লিক করে অ্যাপ ওপেন করুন:', {
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: '🚀 ওপেন করুন Mini App', web_app: { url: webAppUrl } }]
-      ]
-    }
-  });
-});
+async function start() {
+  const webhookDomain = String(process.env.BOT_WEBHOOK_DOMAIN || '').trim();
+  const useWebhook = process.env.NODE_ENV === 'production' && Boolean(webhookDomain);
 
-bot.help((ctx) => {
-  ctx.reply('যেকোনো সহায়তার জন্য আমাদের সাপোর্ট চ্যানেলে যোগাযোগ করুন অথবা Mini App ওপেন করুন।');
-});
-
-// Start bot based on environment mode
-if (process.env.NODE_ENV === 'production' && webhookDomain) {
-  const app = express();
-  app.use(express.json());
-  
-  // Set telegram webhook
-  app.use(bot.webhookCallback(secretPath));
-  bot.telegram.setWebhook(`${webhookDomain}${secretPath}`)
-    .then(() => {
-      console.log(`Bot Webhook set successfully to ${webhookDomain}${secretPath}`);
-    })
-    .catch((err) => {
-      console.error('Failed to set webhook:', err);
+  if (useWebhook) {
+    const express = (await import('express')).default;
+    const app = express();
+    const port = Number(process.env.BOT_PORT || 5001);
+    const secretPath = `/telegraf/${bot.secretPathComponent()}`;
+    app.use(express.json());
+    app.use(bot.webhookCallback(secretPath));
+    await bot.telegram.setWebhook(`${webhookDomain.replace(/\/$/, '')}${secretPath}`);
+    await configureTelegramChrome(bot, config);
+    app.listen(port, () => {
+      console.log(`FA AGENCY EARN bot webhook listening on ${port}`);
     });
+    return;
+  }
 
-  app.listen(port, () => {
-    console.log(`Bot webhook server running on port ${port}`);
-  });
-} else {
-  // Development fallback: Long-polling
-  bot.launch()
-    .then(() => console.log('Bot started in polling mode (Dev)'))
-    .catch((err) => console.error('Bot polling launch failed:', err));
+  await bot.telegram.deleteWebhook({ drop_pending_updates: false }).catch(() => {});
+  await bot.launch({ dropPendingUpdates: false });
+  await configureTelegramChrome(bot, config);
+  console.log(`FA AGENCY EARN bot online (polling) → ${config.appUrl}`);
 }
 
-// Graceful stop
+start().catch((error) => {
+  console.error('Bot launch failed:', error.message);
+  process.exit(1);
+});
+
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));

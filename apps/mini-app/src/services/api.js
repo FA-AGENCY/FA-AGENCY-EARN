@@ -1,4 +1,7 @@
-﻿const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const API_HOST = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || 'https://api.fa-agency.online';
+const API_BASE_URL = String(API_HOST).replace(/\/$/, '').endsWith('/api')
+  ? String(API_HOST).replace(/\/$/, '')
+  : `${String(API_HOST).replace(/\/$/, '')}/api`;
 
 class ApiService {
   constructor() {
@@ -10,20 +13,18 @@ class ApiService {
     const token = localStorage.getItem('token') || '';
     return {
       'Content-Type': 'application/json',
-      'Authorization': token ? `Bearer ${token}` : '',
+      Authorization: token ? `Bearer ${token}` : '',
       'x-telegram-init-data': initData
     };
   }
 
   async request(endpoint, options = {}) {
     const requestKey = `${options.method || 'GET'}:${endpoint}`;
-
     if (this.inFlightRequests.has(requestKey)) {
       throw new Error('দয়া করে অপেক্ষা করুন, রিকোয়েস্ট প্রক্রিয়াধীন রয়েছে।');
     }
 
     this.inFlightRequests.add(requestKey);
-
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         ...options,
@@ -33,15 +34,11 @@ class ApiService {
         }
       });
 
-      const data = await response.json();
-
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(data.message || 'সার্ভার সমস্যা দেখা দিয়েছে।');
+        throw new Error(data.message || data.error || 'সার্ভার সমস্যা দেখা দিয়েছে।');
       }
-
       return data;
-    } catch (error) {
-      throw error;
     } finally {
       this.inFlightRequests.delete(requestKey);
     }
@@ -54,8 +51,18 @@ class ApiService {
   post(endpoint, body) {
     return this.request(endpoint, {
       method: 'POST',
-      body: JSON.stringify(body)
+      body: JSON.stringify(body || {})
     });
+  }
+
+  async authenticateTelegram() {
+    const initData = window.Telegram?.WebApp?.initData || '';
+    if (!initData) return null;
+    const data = await this.post('/auth/telegram', { initData });
+    if (data?.token) {
+      localStorage.setItem('token', data.token);
+    }
+    return data;
   }
 }
 
