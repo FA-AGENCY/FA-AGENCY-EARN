@@ -1,7 +1,7 @@
 ﻿import { Telegraf, Markup } from "telegraf";
 
 const BOT_TOKEN = "8999664421:AAEC4VdrCzjs-YcUlFB7fIWWOFA4gsN_KCY";
-const APP_LINK = "https://t.me/FAAgencyEarnAppBot/myapp";
+const WEB_APP_URL = "https://apps.fa-agency.online";
 
 const bot = new Telegraf(BOT_TOKEN);
 
@@ -15,7 +15,7 @@ bot.start(async (ctx) => {
 🚀 Believe in Your Growth — একসাথে শিখি, একসাথে উপার্জন করি।`;
 
     await ctx.reply(welcomeText, Markup.inlineKeyboard([
-      [Markup.button.url("🚀 ওপেন করুন Mini App", APP_LINK)]
+      [Markup.button.webApp("🚀 ওপেন করুন Mini App", WEB_APP_URL)]
     ]));
   } catch (err) {
     console.error("Error replying to /start:", err);
@@ -27,7 +27,7 @@ bot.catch((err) => {
 });
 
 bot.launch().then(() => {
-  console.log(">>> FA AGENCY EARN Bot is ONLINE and LISTENING to messages! <<<");
+  console.log(">>> FA AGENCY EARN Bot is ONLINE with native WebApp button! <<<");
 }).catch((err) => {
   console.error("Bot Launch Failed:", err);
 });
