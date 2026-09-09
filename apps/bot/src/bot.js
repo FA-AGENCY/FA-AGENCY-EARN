@@ -2,7 +2,7 @@
 require("dotenv").config();
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const WEB_APP_URL = "https://fa-agency-earn.onrender.com";
+const APP_LINK = "https://t.me/FAAgencyEarnAppBot/myapp";
 
 const bot = new Telegraf(BOT_TOKEN);
 
@@ -15,8 +15,8 @@ bot.start((ctx) => {
 🚀 Believe in Your Growth — একসাথে শিখি, একসাথে উপার্জন করি।`;
 
   return ctx.reply(welcomeText, Markup.inlineKeyboard([
-    [Markup.button.webApp("🚀 ওপেন করুন Mini App", WEB_APP_URL)]
+    [Markup.button.url("🚀 ওপেন করুন Mini App", APP_LINK)]
   ]));
 });
 
-bot.launch().then(() => console.log("Bot running successfully..."));
+bot.launch().then(() => console.log("Bot running with shortname link..."));
